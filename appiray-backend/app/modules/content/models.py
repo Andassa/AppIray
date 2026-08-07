@@ -14,7 +14,7 @@ from sqlalchemy.dialects.postgresql import UUID
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 
 from app.core.database import Base
-from app.core.enums import PublicationCategory
+from app.core.enums import PublicationCategory, PublicationStatus
 
 
 class Publication(Base):
@@ -32,6 +32,17 @@ class Publication(Base):
             values_callable=lambda x: [e.value for e in x],
             native_enum=False,
         ),
+        nullable=False,
+        index=True,
+    )
+    status: Mapped[PublicationStatus] = mapped_column(
+        Enum(
+            PublicationStatus,
+            name="publication_status",
+            values_callable=lambda x: [e.value for e in x],
+            native_enum=False,
+        ),
+        default=PublicationStatus.DRAFT,
         nullable=False,
         index=True,
     )

@@ -43,3 +43,24 @@ class UserBadgeRead(BaseModel):
     id: str
     badge: BadgeRead
     earned_at: datetime
+
+
+class DailyQuestRead(BaseModel):
+    model_config = ConfigDict(from_attributes=True)
+
+    id: str
+    title: str
+    description: str
+    criteria: dict
+    xp_reward: int
+    gem_reward: int
+
+
+class UserDailyQuestRead(BaseModel):
+    model_config = ConfigDict(from_attributes=True)
+
+    id: str
+    quest: DailyQuestRead
+    date: date
+    progress: int
+    completed_at: datetime | None

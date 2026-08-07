@@ -88,3 +88,24 @@ class XPTransaction(Base):
     )
 
     user = relationship("User", back_populates="xp_transactions")
+
+
+class StreakFreeze(Base):
+    __tablename__ = "streak_freezes"
+
+    id: Mapped[str] = mapped_column(
+        UUID(as_uuid=False), primary_key=True, default=lambda: str(uuid4())
+    )
+    user_id: Mapped[str] = mapped_column(
+        UUID(as_uuid=False), ForeignKey("users.id", ondelete="CASCADE"), index=True
+    )
+    active_from: Mapped[datetime] = mapped_column(DateTime(timezone=True), nullable=False)
+    active_until: Mapped[datetime] = mapped_column(
+        DateTime(timezone=True), nullable=False, index=True
+    )
+    used: Mapped[bool] = mapped_column(Boolean, default=False, nullable=False, index=True)
+    created_at: Mapped[datetime] = mapped_column(
+        DateTime(timezone=True), server_default=func.now(), nullable=False
+    )
+
+    user = relationship("User")

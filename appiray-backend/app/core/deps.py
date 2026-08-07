@@ -8,7 +8,9 @@ from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.core.database import get_db
+from app.core.email import EmailSender, get_email_sender
 from app.core.enums import UserRole
+from app.core.push import PushSender, get_push_sender
 from app.core.redis import get_redis
 from app.core.security import decode_token
 from app.core.storage import StorageBackend, get_storage
@@ -21,6 +23,8 @@ DbSession = Annotated[AsyncSession, Depends(get_db)]
 RedisClient = Annotated[Redis, Depends(get_redis)]
 Storage = Annotated[StorageBackend, Depends(get_storage)]
 Queue = Annotated[TaskQueue, Depends(get_task_queue)]
+Email = Annotated[EmailSender, Depends(get_email_sender)]
+Push = Annotated[PushSender, Depends(get_push_sender)]
 
 
 async def get_current_user(

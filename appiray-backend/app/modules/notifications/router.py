@@ -1,7 +1,11 @@
 from fastapi import APIRouter, Query
 
 from app.core.deps import CurrentUser, DbSession
-from app.modules.notifications.schemas import NotificationRead
+from app.modules.notifications.schemas import (
+    DeviceTokenCreate,
+    DeviceTokenRead,
+    NotificationRead,
+)
 from app.modules.notifications.service import NotificationService
 
 router = APIRouter(prefix="/notifications", tags=["notifications"])
@@ -29,3 +33,18 @@ async def mark_read(
 async def mark_all_read(user: CurrentUser, db: DbSession) -> dict:
     count = await NotificationService(db).mark_all_read(user)
     return {"marked": count}
+
+
+@router.post("/device-token", response_model=DeviceTokenRead, status_code=201)
+async def register_device_token(
+    data: DeviceTokenCreate, user: CurrentUser, db: DbSession
+) -> DeviceTokenRead:
+    device = await NotificationService(db).register_device_token(user, data)
+    return DeviceTokenRead.model_validate(device)
+
+
+@router.delete("/device-token", status_code=204)
+async def remove_device_token(
+    data: DeviceTokenCreate, user: CurrentUser, db: DbSession
+) -> None:
+    await NotificationService(db).remove_device_token(user, data.token)

@@ -5,7 +5,7 @@ from sqlalchemy.ext.asyncio import AsyncSession
 from app.core.enums import FriendshipStatus, NotificationType
 from app.modules.notifications.models import Notification
 from app.modules.social.models import Friendship
-from app.modules.social.schemas import FriendLeaderboardEntry
+from app.modules.social.schemas import FriendLeaderboardEntry, UserSearchResult
 from app.modules.users.models import User
 
 
@@ -67,6 +67,46 @@ class SocialService:
             )
         )
         return list(result.scalars().all())
+
+    async def search_users(
+        self, user: User, query: str, limit: int = 20
+    ) -> list[UserSearchResult]:
+        result = await self.db.execute(
+            select(User)
+            .where(User.username.ilike(f"%{query}%"), User.id != user.id)
+            .order_by(User.username)
+            .limit(limit)
+        )
+        found = list(result.scalars().all())
+        if not found:
+            return []
+
+        found_ids = [u.id for u in found]
+        rel_result = await self.db.execute(
+            select(Friendship).where(
+                or_(
+                    (Friendship.user_id == user.id)
+                    & (Friendship.friend_id.in_(found_ids)),
+                    (Friendship.friend_id == user.id)
+                    & (Friendship.user_id.in_(found_ids)),
+                )
+            )
+        )
+        status_by_user: dict[str, str] = {}
+        for fr in rel_result.scalars().all():
+            other_id = fr.friend_id if fr.user_id == user.id else fr.user_id
+            status_by_user[other_id] = fr.status.value
+
+        return [
+            UserSearchResult(
+                user_id=u.id,
+                username=u.username,
+                avatar_url=u.avatar_url,
+                xp_total=u.xp_total,
+                friendship_status=status_by_user.get(u.id, "none"),
+            )
+            for u in found
+        ]
 
     async def friends_leaderboard(self, user: User) -> list[FriendLeaderboardEntry]:
         friendships = await self.list_friends(user.id)

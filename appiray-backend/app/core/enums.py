@@ -30,9 +30,21 @@ class PublicationCategory(str, enum.Enum):
     CULTURE = "culture"
 
 
+class PublicationStatus(str, enum.Enum):
+    DRAFT = "draft"
+    PUBLISHED = "published"
+
+
+class DevicePlatform(str, enum.Enum):
+    IOS = "ios"
+    ANDROID = "android"
+
+
 class NotificationType(str, enum.Enum):
     STREAK_REMINDER = "streak_reminder"
+    STREAK_AT_RISK = "streak_at_risk"
     LEAGUE_RESULT = "league_result"
     BADGE_EARNED = "badge_earned"
     FRIEND_REQUEST = "friend_request"
+    QUEST_COMPLETED = "quest_completed"
     SYSTEM = "system"

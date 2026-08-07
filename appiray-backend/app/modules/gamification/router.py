@@ -1,12 +1,14 @@
 from fastapi import APIRouter, Query
 
 from app.core.deps import CurrentAdmin, CurrentUser, DbSession, RedisClient
+from app.modules.gamification.quests import QuestService
 from app.modules.gamification.schemas import (
     BadgeCreate,
     BadgeRead,
     LeaderboardEntry,
     LeagueRead,
     UserBadgeRead,
+    UserDailyQuestRead,
 )
 from app.modules.gamification.service import GamificationService
 
@@ -52,3 +54,9 @@ async def my_badges(
 ) -> list[UserBadgeRead]:
     items = await GamificationService(db, redis).list_user_badges(user.id)
     return [UserBadgeRead.model_validate(i) for i in items]
+
+
+@router.get("/quests/me", response_model=list[UserDailyQuestRead])
+async def my_quests(user: CurrentUser, db: DbSession) -> list[UserDailyQuestRead]:
+    items = await QuestService(db).get_or_generate_today(user)
+    return [UserDailyQuestRead.model_validate(i) for i in items]

@@ -1,3 +1,5 @@
+import hashlib
+import secrets
 from datetime import UTC, datetime, timedelta
 from typing import Any
 from uuid import uuid4
@@ -17,6 +19,16 @@ def hash_password(password: str) -> str:
 
 def verify_password(plain_password: str, hashed_password: str) -> bool:
     return pwd_context.verify(plain_password, hashed_password)
+
+
+def generate_url_token() -> str:
+    """Return a cryptographically-random URL-safe token (for email/reset links)."""
+    return secrets.token_urlsafe(32)
+
+
+def hash_token(raw_token: str) -> str:
+    """Deterministic hash for storing single-use tokens at rest."""
+    return hashlib.sha256(raw_token.encode()).hexdigest()
 
 
 def create_token(

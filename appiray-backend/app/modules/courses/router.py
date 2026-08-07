@@ -1,4 +1,4 @@
-from fastapi import APIRouter
+from fastapi import APIRouter, HTTPException
 
 from app.core.deps import CurrentAdmin, CurrentUser, DbSession
 from app.modules.courses.schemas import (
@@ -11,6 +11,8 @@ from app.modules.courses.schemas import (
     LessonCreate,
     LessonDetail,
     LessonRead,
+    PlacementResult,
+    PlacementSubmit,
     UnitCreate,
     UnitRead,
 )
@@ -64,8 +66,11 @@ async def create_lesson(
 
 
 @router.get("/lessons/{lesson_id}", response_model=LessonDetail)
-async def get_lesson(lesson_id: str, db: DbSession, _: CurrentUser) -> LessonDetail:
-    lesson = await CourseService(db).get_lesson(lesson_id)
+async def get_lesson(lesson_id: str, db: DbSession, user: CurrentUser) -> LessonDetail:
+    service = CourseService(db)
+    if not await service.is_lesson_unlocked(user.id, lesson_id):
+        raise HTTPException(status_code=403, detail="Lesson is locked")
+    lesson = await service.get_lesson(lesson_id)
     # Hide correct_answer from learners
     return LessonDetail(
         id=lesson.id,
@@ -97,3 +102,35 @@ async def create_exercise(
 ) -> ExerciseRead:
     exercise = await CourseService(db).create_exercise(lesson_id, data)
     return ExerciseRead.model_validate(exercise)
+
+
+@router.get("/{course_id}/placement-test", response_model=list[ExerciseRead])
+async def placement_test(
+    course_id: str, db: DbSession, _: CurrentUser
+) -> list[ExerciseRead]:
+    exercises = await CourseService(db).placement_test_exercises(course_id)
+    return [
+        ExerciseRead(
+            id=e.id,
+            lesson_id=e.lesson_id,
+            type=e.type,
+            content=e.content,
+            audio_asset_id=e.audio_asset_id,
+            order=e.order,
+        )
+        for e in exercises
+    ]
+
+
+@router.post("/{course_id}/placement-test/submit", response_model=PlacementResult)
+async def submit_placement_test(
+    course_id: str,
+    data: PlacementSubmit,
+    db: DbSession,
+    user: CurrentUser,
+) -> PlacementResult:
+    answers = {a.exercise_id: a.answer for a in data.answers}
+    correct, unlocked = await CourseService(db).submit_placement_test(
+        user.id, course_id, answers
+    )
+    return PlacementResult(correct_count=correct, units_unlocked=unlocked)

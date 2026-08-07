@@ -24,3 +24,12 @@ class FriendLeaderboardEntry(BaseModel):
     username: str
     xp_total: int
     rank: int
+
+
+class UserSearchResult(BaseModel):
+    user_id: str
+    username: str
+    avatar_url: str | None
+    xp_total: int
+    # Relationship with the current user: "none" | "pending" | "accepted"
+    friendship_status: str

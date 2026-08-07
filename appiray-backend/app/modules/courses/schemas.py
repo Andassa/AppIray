@@ -76,6 +76,20 @@ class ExerciseRead(BaseModel):
     order: int
 
 
+class PlacementAnswer(BaseModel):
+    exercise_id: str
+    answer: str
+
+
+class PlacementSubmit(BaseModel):
+    answers: list[PlacementAnswer]
+
+
+class PlacementResult(BaseModel):
+    correct_count: int
+    units_unlocked: int
+
+
 class LessonDetail(LessonRead):
     exercises: list[ExerciseRead] = []
 

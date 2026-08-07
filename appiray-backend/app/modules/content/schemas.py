@@ -2,7 +2,7 @@ from datetime import datetime
 
 from pydantic import BaseModel, ConfigDict, Field
 
-from app.core.enums import PublicationCategory
+from app.core.enums import PublicationCategory, PublicationStatus
 
 
 class PublicationCreate(BaseModel):
@@ -28,6 +28,7 @@ class PublicationRead(BaseModel):
     title: str
     body: str
     category: PublicationCategory
+    status: PublicationStatus
     cover_image_url: str | None
     author: str
     published_at: datetime

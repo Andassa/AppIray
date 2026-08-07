@@ -58,16 +58,71 @@ pytest -q
 
 Les tests utilisent SQLite en mémoire + un faux Redis (pas besoin de Docker).
 
-## Règles métier MVP (cœurs / streak / XP)
+## Règles métier MVP (cœurs / streak / XP / gemmes)
 
 Documentées aussi dans `ProgressService` :
 
-- **Cœurs** : départ à `MAX_HEARTS` (5). Mauvaise réponse = −1. Impossible de répondre si cœurs = 0.
+- **Cœurs** : départ à `MAX_HEARTS` (5). Mauvaise réponse = −1. Impossible de répondre si cœurs = 0 (hors mode pratique).
+- **Régénération des cœurs** : à la volée (pas de cron). Un cœur regagné toutes les `HEART_REFILL_MINUTES` ; `heart_refill_at` porte l’horodatage du prochain cœur, recalculé à chaque lecture du profil / de la progression.
 - **XP** : `XP_PER_CORRECT_ANSWER` (10) par bonne réponse + `lesson.xp_reward` à la complétion de leçon.
+- **Gemmes** : `+GEMS_PER_LESSON` par leçon terminée, `+GEMS_PER_DAILY_GOAL` quand l’objectif quotidien est atteint (une fois par jour).
+- **Objectif quotidien** : `daily_xp_goal` (défaut `DEFAULT_DAILY_XP_GOAL`), modifiable via `PATCH /progress/daily-goal`.
+- **Recharge instantanée** : `POST /progress/hearts/refill-with-gems` dépense `GEM_COST_HEART_REFILL` gemmes.
+- **Streak freeze** : `POST /progress/streak/freeze` dépense `GEM_COST_STREAK_FREEZE` gemmes et protège la série pendant `STREAK_FREEZE_DAYS` jour(s). Le job de reset consomme un freeze actif avant de casser la série.
+- **Mode pratique** : `GET /progress/practice` renvoie les exercices à réviser (taux d’erreur ≥ 30 %). Les réponses en pratique (`practice: true`) ne coûtent pas de cœurs et rapportent `PRACTICE_XP_REWARD` / `PRACTICE_GEMS_REWARD`.
 - **Niveau** : `level = (xp_total // 100) + 1`.
-- **Streak** : +1 si activité hier ; inchangé si déjà actif aujourd’hui ; reset par job quotidien si inactif > `STREAK_GRACE_HOURS`.
+- **Streak** : +1 si activité hier ; inchangé si déjà actif aujourd’hui ; reset par job quotidien si inactif > `STREAK_GRACE_HOURS` (sauf streak freeze actif).
+- **Déverrouillage** : une leçon est accessible si la précédente de l’unité est complétée ; la 1re leçon d’une unité requiert l’unité précédente complète (`is_lesson_unlocked`). Test de positionnement : `GET/POST /courses/{id}/placement-test`.
+- **Quêtes quotidiennes** : `GET /gamification/quests/me` génère 2-3 quêtes/jour (pool MVP dans `gamification/quests.py`), avancées automatiquement après chaque réponse.
 
-Si tu veux une autre logique (régénération temporelle des cœurs, etc.), on l’ajuste sans toucher à l’architecture.
+La logique de sélection de révision et le pool de quêtes sont volontairement isolés (`ProgressService.select_practice_exercises`, `DEFAULT_QUEST_POOL`) pour être remplacés plus tard (répétition espacée, quêtes data-driven) sans refonte.
+
+## Variables d'environnement ajoutées
+
+| Variable | Défaut | Rôle |
+|---|---|---|
+| `HEART_REFILL_MINUTES` | 240 | Intervalle de régénération d’un cœur |
+| `GEM_COST_HEART_REFILL` | 350 | Coût en gemmes pour recharger les cœurs à fond |
+| `GEM_COST_STREAK_FREEZE` | 200 | Coût en gemmes d’un streak freeze |
+| `STREAK_FREEZE_DAYS` | 1 | Durée de protection d’un streak freeze |
+| `DEFAULT_DAILY_XP_GOAL` | 20 | Objectif XP quotidien par défaut |
+| `GEMS_PER_LESSON` | 5 | Gemmes par leçon complétée |
+| `GEMS_PER_DAILY_GOAL` | 20 | Gemmes à l’atteinte de l’objectif quotidien |
+| `PRACTICE_XP_REWARD` | 5 | XP par bonne réponse en pratique |
+| `PRACTICE_GEMS_REWARD` | 1 | Gemmes par bonne réponse en pratique |
+| `PASSWORD_RESET_TOKEN_EXPIRE_MINUTES` | 30 | Durée de validité d’un token de reset |
+| `EMAIL_VERIFICATION_TOKEN_EXPIRE_MINUTES` | 1440 | Durée de validité d’un token de vérification email |
+| `PUBLIC_APP_URL` | http://localhost:8000 | Base des liens email (reset / vérification) |
+| `EMAIL_SENDER_BACKEND` | log | Backend d’envoi d’emails (`log` par défaut) |
+| `PUSH_SENDER_BACKEND` | log | Backend d’envoi de push (`log` par défaut) |
+
+## Interfaces abstraites `EmailSender` et `PushSender`
+
+Même principe que `TaskQueue` et `StorageBackend` : une interface abstraite + une implémentation `log` par défaut (aucun provider requis en dev), remplaçable en prod sans toucher au code appelant.
+
+- `EmailSender` (`app/core/email.py`) — utilisé par `AuthService` (reset password, vérification email). Par défaut `LogEmailSender` écrit le lien dans les logs.
+- `PushSender` (`app/core/push.py`) — utilisé par le job `notify_streak_at_risk`. Par défaut `LogPushSender` logue l’envoi.
+
+**Brancher un vrai provider (Phase 2) :**
+
+1. Implémenter la sous-classe :
+
+```python
+from app.core.email import EmailSender
+
+class ResendEmailSender(EmailSender):
+    async def send(self, *, to: str, subject: str, body: str) -> None:
+        ...  # appel API Resend/SendGrid/SES
+```
+
+2. L’injecter au démarrage (ex. dans le `lifespan` de `app/main.py`) :
+
+```python
+from app.core.email import set_email_sender
+set_email_sender(ResendEmailSender())
+```
+
+Idem pour `PushSender` via `set_push_sender(FcmPushSender())`. Les endpoints et jobs restent inchangés.
 
 ## Structure
 

@@ -1,14 +1,25 @@
-from fastapi import APIRouter
+from fastapi import APIRouter, Query
 
 from app.core.deps import CurrentUser, DbSession
 from app.modules.social.schemas import (
     FriendLeaderboardEntry,
     FriendRequestCreate,
     FriendshipRead,
+    UserSearchResult,
 )
 from app.modules.social.service import SocialService
 
 router = APIRouter(prefix="/social", tags=["social"])
+
+
+@router.get("/users/search", response_model=list[UserSearchResult])
+async def search_users(
+    user: CurrentUser,
+    db: DbSession,
+    query: str = Query(min_length=1, max_length=80),
+    limit: int = Query(default=20, ge=1, le=50),
+) -> list[UserSearchResult]:
+    return await SocialService(db).search_users(user, query, limit=limit)
 
 
 @router.post("/friends/request", response_model=FriendshipRead, status_code=201)
