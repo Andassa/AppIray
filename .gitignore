@@ -1,0 +1,4 @@
+appiray-audio-pipeline/.venv/
+appiray-audio-pipeline/.env
+appiray-audio-pipeline/generated_audio/
+appiray-audio-pipeline/__pycache__/
