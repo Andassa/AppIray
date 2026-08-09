@@ -158,6 +158,7 @@ Préfixe : `/api/v1`
 - Social : amis + classement entre amis
 - Content : publications publiques, likes/commentaires, CRUD admin
 - Audio : CRUD `audio_assets` (pas de TTS temps réel)
+  - `GET /audio/assets` — pagination (`page`, `page_size`, enveloppe `{items, total, page, page_size}` comme `/content/publications`) + filtres optionnels `voice_model_version` (exact) et `text_malagasy` (ILIKE partiel)
 - Notifications : liste + marquage lu
 
 OpenAPI généré → base idéale pour générer un client Dart/Flutter.

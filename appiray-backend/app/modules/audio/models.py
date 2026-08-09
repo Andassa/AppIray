@@ -17,7 +17,7 @@ class AudioAsset(Base):
     text_malagasy: Mapped[str] = mapped_column(Text, nullable=False, index=True)
     audio_url: Mapped[str] = mapped_column(String(512), nullable=False)
     voice_model_version: Mapped[str] = mapped_column(
-        String(80), default="mms-tts-mlg", nullable=False
+        String(80), default="mms-tts-mlg", nullable=False, index=True
     )
     created_at: Mapped[datetime] = mapped_column(
         DateTime(timezone=True), server_default=func.now(), nullable=False

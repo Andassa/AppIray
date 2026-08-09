@@ -23,3 +23,12 @@ class AudioAssetRead(BaseModel):
     audio_url: str
     voice_model_version: str
     created_at: datetime
+
+
+class PaginatedAudioAssets(BaseModel):
+    """Même enveloppe que `PaginatedPublications` (content)."""
+
+    items: list[AudioAssetRead]
+    total: int
+    page: int
+    page_size: int

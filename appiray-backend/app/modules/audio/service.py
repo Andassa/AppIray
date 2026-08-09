@@ -1,5 +1,5 @@
 from fastapi import HTTPException, UploadFile
-from sqlalchemy import select
+from sqlalchemy import func, select
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.core.storage import StorageBackend
@@ -48,12 +48,34 @@ class AudioService:
             raise HTTPException(status_code=404, detail="Audio asset not found")
         return asset
 
-    async def list(self, q: str | None = None, limit: int = 50) -> list[AudioAsset]:
-        query = select(AudioAsset).order_by(AudioAsset.created_at.desc()).limit(limit)
-        if q:
-            query = query.where(AudioAsset.text_malagasy.ilike(f"%{q}%"))
-        result = await self.db.execute(query)
-        return list(result.scalars().all())
+    async def list(
+        self,
+        *,
+        page: int,
+        page_size: int,
+        voice_model_version: str | None = None,
+        text_malagasy: str | None = None,
+    ) -> tuple[list[AudioAsset], int]:
+        """Liste paginée (LIMIT/OFFSET SQL), même pattern que ContentService."""
+        query = select(AudioAsset)
+        count_q = select(func.count()).select_from(AudioAsset)
+
+        if voice_model_version:
+            query = query.where(AudioAsset.voice_model_version == voice_model_version)
+            count_q = count_q.where(AudioAsset.voice_model_version == voice_model_version)
+        if text_malagasy:
+            # Recherche partielle (ILIKE) — simple et suffisante pour un check ciblé.
+            pattern = f"%{text_malagasy}%"
+            query = query.where(AudioAsset.text_malagasy.ilike(pattern))
+            count_q = count_q.where(AudioAsset.text_malagasy.ilike(pattern))
+
+        total = (await self.db.execute(count_q)).scalar_one()
+        result = await self.db.execute(
+            query.order_by(AudioAsset.created_at.desc())
+            .offset((page - 1) * page_size)
+            .limit(page_size)
+        )
+        return list(result.scalars().all()), total
 
     async def update(self, asset_id: str, data: AudioAssetUpdate) -> AudioAsset:
         asset = await self.get(asset_id)
