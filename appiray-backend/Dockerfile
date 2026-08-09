@@ -19,10 +19,14 @@ RUN pip install --prefix=/install -r requirements.txt
 
 FROM python:3.12-slim AS runtime
 
+# Les deps sont installées via `pip --prefix=/install` (stage builder).
+# Sans ce PYTHONPATH, les binaires (/install/bin/alembic, uvicorn, …) sont
+# trouvés via PATH mais leurs modules Python ne le sont pas
+# → ModuleNotFoundError: No module named 'alembic.config'.
 ENV PYTHONDONTWRITEBYTECODE=1 \
     PYTHONUNBUFFERED=1 \
     PATH="/install/bin:$PATH" \
-    PYTHONPATH=/app
+    PYTHONPATH="/install/lib/python3.12/site-packages:/app"
 
 WORKDIR /app
 

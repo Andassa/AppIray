@@ -215,6 +215,8 @@ Déclenché uniquement sur les changements `appiray-backend/**` (et le workflow 
 
 Build l'image, `docker compose up`, attend `/health`, rejoue `alembic upgrade head` **contre Postgres** (validation des migrations hors SQLite), vérifie HTTP 200, puis `docker compose down -v` (`if: always()`).
 
+> **Note `localhost` en CI** : sur GitHub Actions, `curl http://localhost:8000/health` vise la **machine du runner**, pas ton PC. Comme `docker-compose.yml` publie `ports: "8000:8000"`, le runner atteint bien le conteneur `api`. C’est le pattern Docker CI habituel.
+
 ### Lancer les mêmes checks en local (avant un push)
 
 ```bash

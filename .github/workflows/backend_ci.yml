@@ -68,17 +68,33 @@ jobs:
         run: docker compose up -d --build
 
       - name: Wait for API healthy
+        # `localhost:8000` = machine du runner GitHub Actions, pas ton PC.
+        # docker-compose publie `ports: "8000:8000"` → curl depuis le runner
+        # atteint le conteneur `api`. C'est le pattern standard en CI Docker.
         run: |
-          echo "Waiting for http://localhost:8000/health ..."
+          echo "Waiting for http://localhost:8000/health (runner → published container port) ..."
           for i in $(seq 1 60); do
+            # Échec rapide si le conteneur api a crashé (ex: alembic import error).
+            if ! docker compose ps --status running --services | grep -qx api; then
+              echo "API container is not running (attempt $i) — dumping logs"
+              docker compose ps
+              docker compose logs api
+              exit 1
+            fi
             if curl -sf http://localhost:8000/health >/dev/null; then
               echo "API is up (attempt $i)"
               exit 0
             fi
-            echo "  attempt $i: not ready yet"
+            if [ $((i % 10)) -eq 0 ]; then
+              echo "  attempt $i: still waiting — recent api logs:"
+              docker compose logs --tail=30 api || true
+            else
+              echo "  attempt $i: not ready yet"
+            fi
             sleep 2
           done
           echo "API failed to become healthy"
+          docker compose ps
           docker compose logs
           exit 1
 
