@@ -9,11 +9,18 @@ class LocalCacheService {
   final SharedPreferences _prefs;
 
   static const _kOnboardingSeen = 'onboarding_seen';
+  static const _kPlacementTestSeen = 'placement_test_seen';
   static const _kLastUserId = 'last_user_id';
 
   bool get onboardingSeen => _prefs.getBool(_kOnboardingSeen) ?? false;
   Future<void> setOnboardingSeen(bool value) =>
       _prefs.setBool(_kOnboardingSeen, value);
+
+  /// True si l'utilisateur a fait ou passé le test de positionnement.
+  bool get placementTestSeen =>
+      _prefs.getBool(_kPlacementTestSeen) ?? false;
+  Future<void> setPlacementTestSeen(bool value) =>
+      _prefs.setBool(_kPlacementTestSeen, value);
 
   String? get lastUserId => _prefs.getString(_kLastUserId);
   Future<void> setLastUserId(String? value) async {

@@ -6,7 +6,7 @@ part of 'app_router.dart';
 // RiverpodGenerator
 // **************************************************************************
 
-String _$appRouterHash() => r'bfef902f58a5fc19166333cf1ba02f64b735f5ee';
+String _$appRouterHash() => r'7a9732fba15b1216efe01be9d57bed65144be959';
 
 /// Router applicatif. Écoute [SessionController] pour rediriger de façon
 /// réactive (déconnexion à tout moment → retour au welcome/login).

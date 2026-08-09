@@ -2,6 +2,7 @@ import 'package:flutter/foundation.dart';
 import 'package:go_router/go_router.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 
+import 'package:appiray/core/providers/core_providers.dart';
 import 'package:appiray/core/router/route_paths.dart';
 import 'package:appiray/core/session/session_controller.dart';
 import 'package:appiray/features/auth/presentation/screens/forgot_password_screen.dart';
@@ -16,6 +17,10 @@ import 'package:appiray/features/home/presentation/screens/home_screen.dart';
 import 'package:appiray/features/lesson_player/presentation/screens/lesson_player_screen.dart';
 import 'package:appiray/features/notifications/presentation/screens/notifications_screen.dart';
 import 'package:appiray/features/onboarding/presentation/screens/welcome_screen.dart';
+import 'package:appiray/features/placement_test/domain/placement_entities.dart';
+import 'package:appiray/features/placement_test/presentation/screens/placement_test_intro_screen.dart';
+import 'package:appiray/features/placement_test/presentation/screens/placement_test_result_screen.dart';
+import 'package:appiray/features/placement_test/presentation/screens/placement_test_screen.dart';
 import 'package:appiray/features/practice/presentation/screens/practice_screen.dart';
 import 'package:appiray/features/profile/presentation/screens/profile_screen.dart';
 import 'package:appiray/features/progress/presentation/screens/progress_screen.dart';
@@ -56,7 +61,12 @@ GoRouter appRouter(AppRouterRef ref) {
 
       final authenticated = status == AuthStatus.authenticated;
       if (!authenticated && !isPublic) return RoutePaths.welcome;
-      if (authenticated && isPublic) return RoutePaths.home;
+      // Après login/register : placement test si pas encore vu/passé.
+      if (authenticated && isPublic) {
+        final seen =
+            ref.read(localCacheServiceProvider).placementTestSeen;
+        return seen ? RoutePaths.home : RoutePaths.placementIntro;
+      }
       return null;
     },
     routes: [
@@ -79,6 +89,32 @@ GoRouter appRouter(AppRouterRef ref) {
       GoRoute(
         path: RoutePaths.home,
         builder: (_, _) => const HomeScreen(),
+      ),
+      GoRoute(
+        path: RoutePaths.placementIntro,
+        builder: (_, _) => const PlacementTestIntroScreen(),
+      ),
+      GoRoute(
+        path: RoutePaths.placementSession,
+        builder: (_, state) => PlacementTestScreen(
+          courseId: state.pathParameters['courseId']!,
+        ),
+        routes: [
+          GoRoute(
+            path: 'result',
+            builder: (_, state) {
+              final result = state.extra;
+              if (result is! PlacementResult) {
+                // Accès direct sans résultat → retour intro.
+                return const PlacementTestIntroScreen();
+              }
+              return PlacementTestResultScreen(
+                courseId: state.pathParameters['courseId']!,
+                result: result,
+              );
+            },
+          ),
+        ],
       ),
       GoRoute(
         path: RoutePaths.lessonPlayer,

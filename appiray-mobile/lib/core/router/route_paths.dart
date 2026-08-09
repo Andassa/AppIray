@@ -11,6 +11,15 @@ class RoutePaths {
   static const String lessonPlayer = '/lesson/:lessonId';
   static String lessonPlayerFor(String lessonId) => '/lesson/$lessonId';
 
+  /// Test de positionnement (après inscription, avant home).
+  static const String placementIntro = '/placement-test';
+  static const String placementSession = '/placement-test/:courseId';
+  static String placementSessionFor(String courseId) =>
+      '/placement-test/$courseId';
+  static const String placementResult = '/placement-test/:courseId/result';
+  static String placementResultFor(String courseId) =>
+      '/placement-test/$courseId/result';
+
   static const String progress = '/progress';
   static const String practice = '/practice';
 
