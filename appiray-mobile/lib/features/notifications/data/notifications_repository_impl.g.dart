@@ -7,7 +7,7 @@ part of 'notifications_repository_impl.dart';
 // **************************************************************************
 
 String _$notificationsRemoteDataSourceHash() =>
-    r'd377fa0f0f09c133e4345ff9925e513c06ff3334';
+    r'3b34e4aec29f3c5a7ec6fd3d32d355217abef8e7';
 
 /// See also [notificationsRemoteDataSource].
 @ProviderFor(notificationsRemoteDataSource)
@@ -27,7 +27,7 @@ final notificationsRemoteDataSourceProvider =
 typedef NotificationsRemoteDataSourceRef =
     AutoDisposeProviderRef<NotificationsRemoteDataSource>;
 String _$notificationsRepositoryHash() =>
-    r'724efde7e1b70c5e9da0f80d74043eb100da265f';
+    r'5db61bd68f170fb79fe35153eda50c756611e7a6';
 
 /// See also [notificationsRepository].
 @ProviderFor(notificationsRepository)

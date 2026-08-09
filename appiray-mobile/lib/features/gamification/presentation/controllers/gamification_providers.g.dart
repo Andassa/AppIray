@@ -6,7 +6,7 @@ part of 'gamification_providers.dart';
 // RiverpodGenerator
 // **************************************************************************
 
-String _$myLeagueHash() => r'3fa22a7c61328a9c3971a919cc4eb904415047ab';
+String _$myLeagueHash() => r'd3781260b598ac7611a278d704647086c23529f4';
 
 /// See also [myLeague].
 @ProviderFor(myLeague)
@@ -23,7 +23,7 @@ final myLeagueProvider = AutoDisposeFutureProvider<League>.internal(
 @Deprecated('Will be removed in 3.0. Use Ref instead')
 // ignore: unused_element
 typedef MyLeagueRef = AutoDisposeFutureProviderRef<League>;
-String _$leaderboardHash() => r'05734a3bb422c602c9ff92eee3976625585a3841';
+String _$leaderboardHash() => r'c47b27d836eae5b333d05b58387e2d6fbf8ba7ba';
 
 /// See also [leaderboard].
 @ProviderFor(leaderboard)
@@ -41,7 +41,7 @@ final leaderboardProvider =
 @Deprecated('Will be removed in 3.0. Use Ref instead')
 // ignore: unused_element
 typedef LeaderboardRef = AutoDisposeFutureProviderRef<List<LeaderboardEntry>>;
-String _$myBadgesHash() => r'd15774bfeb7d7ea4d34785626e1175ee7843110c';
+String _$myBadgesHash() => r'ec4f235f397351a301443a1020e8904438a154a6';
 
 /// See also [myBadges].
 @ProviderFor(myBadges)
@@ -58,7 +58,7 @@ final myBadgesProvider = AutoDisposeFutureProvider<List<Badge>>.internal(
 @Deprecated('Will be removed in 3.0. Use Ref instead')
 // ignore: unused_element
 typedef MyBadgesRef = AutoDisposeFutureProviderRef<List<Badge>>;
-String _$myQuestsHash() => r'842cdbfa2d7fa6077ca63f08e16138f89de87c73';
+String _$myQuestsHash() => r'c1f4cead4d20171e38488ee05cb49eed3549b651';
 
 /// See also [myQuests].
 @ProviderFor(myQuests)

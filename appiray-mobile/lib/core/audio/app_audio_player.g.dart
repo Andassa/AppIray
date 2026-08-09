@@ -1,30 +1,29 @@
 // GENERATED CODE - DO NOT MODIFY BY HAND
 
-part of 'app_router.dart';
+part of 'app_audio_player.dart';
 
 // **************************************************************************
 // RiverpodGenerator
 // **************************************************************************
 
-String _$appRouterHash() => r'bfef902f58a5fc19166333cf1ba02f64b735f5ee';
+String _$appAudioPlayerHash() => r'217d0ce06d47c0e08e3dbbafc24947f8144ada90';
 
-/// Router applicatif. Écoute [SessionController] pour rediriger de façon
-/// réactive (déconnexion à tout moment → retour au welcome/login).
+/// Lecteur unique partagé (un seul actif dans toute l'app).
 ///
-/// Copied from [appRouter].
-@ProviderFor(appRouter)
-final appRouterProvider = Provider<GoRouter>.internal(
-  appRouter,
-  name: r'appRouterProvider',
+/// Copied from [appAudioPlayer].
+@ProviderFor(appAudioPlayer)
+final appAudioPlayerProvider = Provider<AppAudioPlayer>.internal(
+  appAudioPlayer,
+  name: r'appAudioPlayerProvider',
   debugGetCreateSourceHash: const bool.fromEnvironment('dart.vm.product')
       ? null
-      : _$appRouterHash,
+      : _$appAudioPlayerHash,
   dependencies: null,
   allTransitiveDependencies: null,
 );
 
 @Deprecated('Will be removed in 3.0. Use Ref instead')
 // ignore: unused_element
-typedef AppRouterRef = ProviderRef<GoRouter>;
+typedef AppAudioPlayerRef = ProviderRef<AppAudioPlayer>;
 // ignore_for_file: type=lint
 // ignore_for_file: subtype_of_sealed_class, invalid_use_of_internal_member, invalid_use_of_visible_for_testing_member, deprecated_member_use_from_same_package

@@ -6,7 +6,7 @@ part of 'core_providers.dart';
 // RiverpodGenerator
 // **************************************************************************
 
-String _$sharedPreferencesHash() => r'5b665a3944e8f01007b09a14c5b609505bbd899c';
+String _$sharedPreferencesHash() => r'64137b7d2ba5ac3daef9c037e265e2c90c7e8c68';
 
 /// Instance de [SharedPreferences] — surchargée dans `main()` après init async.
 ///
@@ -26,7 +26,7 @@ final sharedPreferencesProvider = Provider<SharedPreferences>.internal(
 // ignore: unused_element
 typedef SharedPreferencesRef = ProviderRef<SharedPreferences>;
 String _$secureStorageServiceHash() =>
-    r'977e09a031697444060df5ea90e1560d13b5feb1';
+    r'705a60caa3d865978fd9f6134dc7281efa34ce91';
 
 /// See also [secureStorageService].
 @ProviderFor(secureStorageService)
@@ -43,7 +43,7 @@ final secureStorageServiceProvider = Provider<SecureStorageService>.internal(
 @Deprecated('Will be removed in 3.0. Use Ref instead')
 // ignore: unused_element
 typedef SecureStorageServiceRef = ProviderRef<SecureStorageService>;
-String _$localCacheServiceHash() => r'33d06e3ef9587cef0632aa04500329071249a785';
+String _$localCacheServiceHash() => r'f7a26c219512ae903299a7bcb3dcbdc09eb62af3';
 
 /// See also [localCacheService].
 @ProviderFor(localCacheService)
@@ -60,7 +60,7 @@ final localCacheServiceProvider = Provider<LocalCacheService>.internal(
 @Deprecated('Will be removed in 3.0. Use Ref instead')
 // ignore: unused_element
 typedef LocalCacheServiceRef = ProviderRef<LocalCacheService>;
-String _$dioClientHash() => r'ceb552022c414e8be8d9db2eae42f82b9ae3d797';
+String _$dioClientHash() => r'd41459af1b9c4500507b76fa16905a10d76fc213';
 
 /// Client HTTP applicatif (Dio) partagé.
 ///

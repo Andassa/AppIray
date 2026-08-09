@@ -7,7 +7,7 @@ part of 'courses_repository_impl.dart';
 // **************************************************************************
 
 String _$coursesRemoteDataSourceHash() =>
-    r'03c23578e1b50bc6a542e745ac79b7384ec79c37';
+    r'7353657f2bdef625b177ce08e2238aaf0b091e8a';
 
 /// See also [coursesRemoteDataSource].
 @ProviderFor(coursesRemoteDataSource)
@@ -26,7 +26,7 @@ final coursesRemoteDataSourceProvider =
 // ignore: unused_element
 typedef CoursesRemoteDataSourceRef =
     AutoDisposeProviderRef<CoursesRemoteDataSource>;
-String _$coursesRepositoryHash() => r'627d23da5538afdb4c5b4a2d8276f0b704496d6d';
+String _$coursesRepositoryHash() => r'c04cea1750ec42bbf1a6e53d8b8a4dd8f4122a9f';
 
 /// See also [coursesRepository].
 @ProviderFor(coursesRepository)

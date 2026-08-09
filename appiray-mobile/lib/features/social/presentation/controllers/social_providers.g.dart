@@ -7,7 +7,7 @@ part of 'social_providers.dart';
 // **************************************************************************
 
 String _$friendsLeaderboardHash() =>
-    r'1052705edf02c7fdf8612a774bfd80b745d6dbd5';
+    r'cd5c17da54c89b9f4cb936c305eff0347b80a569';
 
 /// See also [friendsLeaderboard].
 @ProviderFor(friendsLeaderboard)

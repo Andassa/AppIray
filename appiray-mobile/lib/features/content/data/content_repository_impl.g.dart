@@ -7,7 +7,7 @@ part of 'content_repository_impl.dart';
 // **************************************************************************
 
 String _$contentRemoteDataSourceHash() =>
-    r'bd7e4f39d33832ed2463fc42cce7e6b7848ebb8a';
+    r'fc017e6192dd9e38ae0cde3d0df4aebe154ddd60';
 
 /// See also [contentRemoteDataSource].
 @ProviderFor(contentRemoteDataSource)
@@ -26,7 +26,7 @@ final contentRemoteDataSourceProvider =
 // ignore: unused_element
 typedef ContentRemoteDataSourceRef =
     AutoDisposeProviderRef<ContentRemoteDataSource>;
-String _$contentRepositoryHash() => r'a37a28740a0afc03df60c6c0a5609bfc50310b3c';
+String _$contentRepositoryHash() => r'25a6cd17c79633c9ab1c36fa265f8725dad4983c';
 
 /// See also [contentRepository].
 @ProviderFor(contentRepository)

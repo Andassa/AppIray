@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
+import 'package:appiray/core/audio/audio_player_service.dart';
 import 'package:appiray/features/lesson_player/domain/lesson_entities.dart';
 import 'package:appiray/features/lesson_player/presentation/controllers/lesson_session_controller.dart';
 import 'package:appiray/features/lesson_player/presentation/widgets/listen_exercise_widget.dart';
@@ -17,8 +18,36 @@ class PracticeScreen extends ConsumerStatefulWidget {
   ConsumerState<PracticeScreen> createState() => _PracticeScreenState();
 }
 
-class _PracticeScreenState extends ConsumerState<PracticeScreen> {
+class _PracticeScreenState extends ConsumerState<PracticeScreen>
+    with WidgetsBindingObserver {
   String? _currentAnswer;
+
+  @override
+  void initState() {
+    super.initState();
+    WidgetsBinding.instance.addObserver(this);
+  }
+
+  @override
+  void dispose() {
+    WidgetsBinding.instance.removeObserver(this);
+    super.dispose();
+  }
+
+  @override
+  void deactivate() {
+    ref.read(audioPlayerServiceProvider.notifier).stop();
+    super.deactivate();
+  }
+
+  @override
+  void didChangeAppLifecycleState(AppLifecycleState state) {
+    if (state == AppLifecycleState.paused ||
+        state == AppLifecycleState.inactive ||
+        state == AppLifecycleState.detached) {
+      ref.read(audioPlayerServiceProvider.notifier).pause();
+    }
+  }
 
   @override
   Widget build(BuildContext context) {

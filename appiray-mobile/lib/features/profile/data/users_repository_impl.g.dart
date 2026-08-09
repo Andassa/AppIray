@@ -7,7 +7,7 @@ part of 'users_repository_impl.dart';
 // **************************************************************************
 
 String _$usersRemoteDataSourceHash() =>
-    r'edac327b20228e73543f2029a4cae49d569ce143';
+    r'd7fbd3a20b9426b6f3ca210ccad69cc021bf939e';
 
 /// See also [usersRemoteDataSource].
 @ProviderFor(usersRemoteDataSource)
@@ -26,7 +26,7 @@ final usersRemoteDataSourceProvider =
 // ignore: unused_element
 typedef UsersRemoteDataSourceRef =
     AutoDisposeProviderRef<UsersRemoteDataSource>;
-String _$usersRepositoryHash() => r'c7d8d7a89bb8b49f3d174b0c498d4a50102dd653';
+String _$usersRepositoryHash() => r'f5efef69d142f34f44313b57c319e4423697726b';
 
 /// See also [usersRepository].
 @ProviderFor(usersRepository)

@@ -6,7 +6,7 @@ part of 'content_providers.dart';
 // RiverpodGenerator
 // **************************************************************************
 
-String _$feedHash() => r'e2a8e70718f80042507ad3b98f5986e6759bf899';
+String _$feedHash() => r'b0cfc91d9878a9fde68de7899793c2737cc9a3c3';
 
 /// Fil des publications publiées.
 ///

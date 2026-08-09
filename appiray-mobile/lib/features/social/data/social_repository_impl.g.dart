@@ -7,7 +7,7 @@ part of 'social_repository_impl.dart';
 // **************************************************************************
 
 String _$socialRemoteDataSourceHash() =>
-    r'6e7af64a906368460a2c80f8692f5d7c56be4ef4';
+    r'6a4a40828a2d986e50c2103f10cf702a1649c00b';
 
 /// See also [socialRemoteDataSource].
 @ProviderFor(socialRemoteDataSource)
@@ -26,7 +26,7 @@ final socialRemoteDataSourceProvider =
 // ignore: unused_element
 typedef SocialRemoteDataSourceRef =
     AutoDisposeProviderRef<SocialRemoteDataSource>;
-String _$socialRepositoryHash() => r'336c1792537d2a5e5dd3e1ebff7e7c7f01991f58';
+String _$socialRepositoryHash() => r'4e86d0538c68cb01fc8b7eb555f370b557fc7058';
 
 /// See also [socialRepository].
 @ProviderFor(socialRepository)

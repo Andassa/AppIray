@@ -7,7 +7,7 @@ part of 'auth_repository_impl.dart';
 // **************************************************************************
 
 String _$authRemoteDataSourceHash() =>
-    r'90deb4759d582b482735f33ccef1a1569eb8e296';
+    r'08b69d7d24aa7007f7e3e888cdf823a012bb7b7e';
 
 /// See also [authRemoteDataSource].
 @ProviderFor(authRemoteDataSource)
@@ -25,7 +25,7 @@ final authRemoteDataSourceProvider =
 @Deprecated('Will be removed in 3.0. Use Ref instead')
 // ignore: unused_element
 typedef AuthRemoteDataSourceRef = AutoDisposeProviderRef<AuthRemoteDataSource>;
-String _$authRepositoryHash() => r'c2e2aedfa7e64bc1421d451d13d19426f1c7eb29';
+String _$authRepositoryHash() => r'97897044ad03e25a214a17a4f7eb0cf6618f2d81';
 
 /// See also [authRepository].
 @ProviderFor(authRepository)

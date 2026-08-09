@@ -107,7 +107,17 @@ flutter test
 - Aucune donnée visuelle n'est mockée en dur : les écrans passent toujours par les
   repositories. Si le backend est vide, les écrans affichent simplement un état
   vide/chargement — c'est attendu à ce stade.
-- Lecture audio (exercices `listen`) et reconnaissance vocale (`speak`) : les points
-  d'entrée existent dans les widgets, mais le branchement réel (lecteur audio / STT)
-  est à faire lors de l'intégration.
-```
+- Reconnaissance vocale (`speak`) : point d'entrée stub, STT à brancher plus tard.
+
+## Audio — exercices `listen`
+
+Dépendance : **`just_audio`** (seul package de lecture audio du projet).
+
+- Service partagé : `lib/core/audio/audio_player_service.dart` (un seul lecteur
+  actif dans l'app, état `idle/loading/playing/paused/error`).
+- URL lue via `Exercise.audioUrl` → `content['audio_url']` (fallback `audioUrl`).
+- **Auto-play** : dès qu'une question `listen` s'affiche, l'audio démarre sans
+  clic (comportement type Duolingo). L'utilisateur peut pause / réécouter / retry.
+- La lecture est stoppée en changeant de question, en quittant la leçon, ou
+  mise en pause si l'app passe en arrière-plan.
+

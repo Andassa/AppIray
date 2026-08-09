@@ -7,7 +7,7 @@ part of 'gamification_repository_impl.dart';
 // **************************************************************************
 
 String _$gamificationRemoteDataSourceHash() =>
-    r'0897e53b2c7e5f71a0dcfbce25469199144bede5';
+    r'91a04506fc4f17c1ababa58b7c08295d3ee5b3b8';
 
 /// See also [gamificationRemoteDataSource].
 @ProviderFor(gamificationRemoteDataSource)
@@ -27,7 +27,7 @@ final gamificationRemoteDataSourceProvider =
 typedef GamificationRemoteDataSourceRef =
     AutoDisposeProviderRef<GamificationRemoteDataSource>;
 String _$gamificationRepositoryHash() =>
-    r'2cb549d36c443147957405cef85fbc985ec79bc0';
+    r'd322480039b1a16c2a4be61ca08fbf0036640728';
 
 /// See also [gamificationRepository].
 @ProviderFor(gamificationRepository)
