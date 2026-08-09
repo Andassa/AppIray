@@ -65,9 +65,7 @@ class Publication(Base):
 
 class PublicationLike(Base):
     __tablename__ = "publication_likes"
-    __table_args__ = (
-        UniqueConstraint("publication_id", "user_id", name="uq_publication_like"),
-    )
+    __table_args__ = (UniqueConstraint("publication_id", "user_id", name="uq_publication_like"),)
 
     id: Mapped[str] = mapped_column(
         UUID(as_uuid=False), primary_key=True, default=lambda: str(uuid4())

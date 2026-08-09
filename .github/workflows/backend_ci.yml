@@ -1,0 +1,99 @@
+name: Backend CI
+
+on:
+  push:
+    paths:
+      - "appiray-backend/**"
+      - ".github/workflows/backend_ci.yml"
+  pull_request:
+    paths:
+      - "appiray-backend/**"
+      - ".github/workflows/backend_ci.yml"
+
+defaults:
+  run:
+    working-directory: appiray-backend
+
+jobs:
+  lint-and-test:
+    name: Lint, typecheck & pytest
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+          cache: pip
+          cache-dependency-path: |
+            appiray-backend/requirements.txt
+            appiray-backend/requirements-dev.txt
+
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install -r requirements.txt -r requirements-dev.txt
+
+      - name: Ruff lint
+        run: ruff check .
+
+      - name: Ruff format check
+        run: ruff format --check .
+
+      - name: Mypy (non-blocking — first introduction)
+        # Le projet n'a jamais été typé-checké ; on collecte les erreurs sans
+        # faire échouer le build tant que la base n'est pas assainie.
+        continue-on-error: true
+        run: mypy app/
+
+      - name: Pytest with coverage
+        run: pytest -q --cov=app --cov-report=term-missing
+
+  docker:
+    name: Docker build + compose (Postgres Alembic)
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Prepare .env
+        run: cp .env.example .env
+
+      - name: Build Docker image
+        run: docker build -t appiray-backend:ci .
+
+      - name: Compose up
+        run: docker compose up -d --build
+
+      - name: Wait for API healthy
+        run: |
+          echo "Waiting for http://localhost:8000/health ..."
+          for i in $(seq 1 60); do
+            if curl -sf http://localhost:8000/health >/dev/null; then
+              echo "API is up (attempt $i)"
+              exit 0
+            fi
+            echo "  attempt $i: not ready yet"
+            sleep 2
+          done
+          echo "API failed to become healthy"
+          docker compose logs
+          exit 1
+
+      - name: Verify Alembic against Postgres
+        # Confirme que les migrations tournent sous Postgres (pas seulement SQLite tests).
+        # compose démarre déjà avec `alembic upgrade head` ; on rejoue pour valider
+        # explicitement le point d'audit resté en suspens.
+        run: docker compose exec -T api alembic upgrade head
+
+      - name: Health check HTTP 200
+        run: |
+          status=$(curl -s -o /tmp/health.json -w "%{http_code}" http://localhost:8000/health)
+          echo "HTTP $status — body: $(cat /tmp/health.json)"
+          test "$status" = "200"
+
+      - name: Compose down
+        if: always()
+        run: docker compose down -v

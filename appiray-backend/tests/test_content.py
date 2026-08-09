@@ -1,15 +1,13 @@
 import pytest
+from app.core.enums import UserRole
 from httpx import AsyncClient
 from sqlalchemy.ext.asyncio import AsyncSession
 
-from app.core.enums import UserRole
 from tests.helpers import auth, create_user, login
 
 
 async def _admin_and_user(db: AsyncSession) -> None:
-    await create_user(
-        db, email="admin@example.com", username="admin", role=UserRole.ADMIN
-    )
+    await create_user(db, email="admin@example.com", username="admin", role=UserRole.ADMIN)
     await create_user(db, email="member@example.com", username="member")
 
 
@@ -67,9 +65,7 @@ async def test_publication_draft_publish_workflow(
 
 
 @pytest.mark.asyncio
-async def test_like_and_comment_moderation(
-    client: AsyncClient, db_session: AsyncSession
-) -> None:
+async def test_like_and_comment_moderation(client: AsyncClient, db_session: AsyncSession) -> None:
     await _admin_and_user(db_session)
     admin_token = await login(client, email="admin@example.com")
     user_token = await login(client, email="member@example.com")
@@ -80,9 +76,7 @@ async def test_like_and_comment_moderation(
         json={"title": "T", "body": "b", "category": "culture", "author": "A"},
     )
     pub_id = created.json()["id"]
-    await client.post(
-        f"/api/v1/content/publications/{pub_id}/publish", headers=auth(admin_token)
-    )
+    await client.post(f"/api/v1/content/publications/{pub_id}/publish", headers=auth(admin_token))
 
     like = await client.post(
         f"/api/v1/content/publications/{pub_id}/like", headers=auth(user_token)

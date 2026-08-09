@@ -31,9 +31,7 @@ async def request_friend(
 
 
 @router.post("/friends/{friendship_id}/accept", response_model=FriendshipRead)
-async def accept_friend(
-    friendship_id: str, user: CurrentUser, db: DbSession
-) -> FriendshipRead:
+async def accept_friend(friendship_id: str, user: CurrentUser, db: DbSession) -> FriendshipRead:
     friendship = await SocialService(db).accept_friend(user, friendship_id)
     return FriendshipRead.model_validate(friendship)
 
@@ -45,7 +43,5 @@ async def list_friends(user: CurrentUser, db: DbSession) -> list[FriendshipRead]
 
 
 @router.get("/friends/leaderboard", response_model=list[FriendLeaderboardEntry])
-async def friends_leaderboard(
-    user: CurrentUser, db: DbSession
-) -> list[FriendLeaderboardEntry]:
+async def friends_leaderboard(user: CurrentUser, db: DbSession) -> list[FriendLeaderboardEntry]:
     return await SocialService(db).friends_leaderboard(user)

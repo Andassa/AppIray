@@ -25,9 +25,7 @@ async def list_publications(
     items, total = await ContentService(db).list_publications(
         page=page, page_size=page_size, category=category, published_only=True
     )
-    return PaginatedPublications(
-        items=items, total=total, page=page, page_size=page_size
-    )
+    return PaginatedPublications(items=items, total=total, page=page, page_size=page_size)
 
 
 @router.get("/admin/publications", response_model=PaginatedPublications)
@@ -46,9 +44,7 @@ async def admin_list_publications(
         published_only=False,
         status=status,
     )
-    return PaginatedPublications(
-        items=items, total=total, page=page, page_size=page_size
-    )
+    return PaginatedPublications(items=items, total=total, page=page, page_size=page_size)
 
 
 @router.get("/publications/{publication_id}", response_model=PublicationRead)
@@ -83,23 +79,17 @@ async def publish_publication(
 
 
 @router.delete("/publications/{publication_id}", status_code=204)
-async def delete_publication(
-    publication_id: str, db: DbSession, _: CurrentAdmin
-) -> None:
+async def delete_publication(publication_id: str, db: DbSession, _: CurrentAdmin) -> None:
     await ContentService(db).delete_publication(publication_id)
 
 
 @router.post("/publications/{publication_id}/like", status_code=204)
-async def like_publication(
-    publication_id: str, user: CurrentUser, db: DbSession
-) -> None:
+async def like_publication(publication_id: str, user: CurrentUser, db: DbSession) -> None:
     await ContentService(db).like(user, publication_id)
 
 
 @router.delete("/publications/{publication_id}/like", status_code=204)
-async def unlike_publication(
-    publication_id: str, user: CurrentUser, db: DbSession
-) -> None:
+async def unlike_publication(publication_id: str, user: CurrentUser, db: DbSession) -> None:
     await ContentService(db).unlike(user, publication_id)
 
 

@@ -1,11 +1,11 @@
 import pytest
+from app.core.email import LogEmailSender, set_email_sender
+from app.core.security import hash_token
+from app.modules.auth.models import EmailVerificationToken, PasswordResetToken
 from httpx import AsyncClient
 from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
 
-from app.core.email import LogEmailSender, set_email_sender
-from app.core.security import hash_token
-from app.modules.auth.models import EmailVerificationToken, PasswordResetToken
 from tests.helpers import auth, register_user
 
 
@@ -18,9 +18,7 @@ class CapturingEmailSender(LogEmailSender):
 
 
 @pytest.mark.asyncio
-async def test_forgot_and_reset_password(
-    client: AsyncClient, db_session: AsyncSession
-) -> None:
+async def test_forgot_and_reset_password(client: AsyncClient, db_session: AsyncSession) -> None:
     sender = CapturingEmailSender()
     set_email_sender(sender)
     try:
@@ -69,9 +67,7 @@ async def test_forgot_and_reset_password(
 
 
 @pytest.mark.asyncio
-async def test_email_verification_flow(
-    client: AsyncClient, db_session: AsyncSession
-) -> None:
+async def test_email_verification_flow(client: AsyncClient, db_session: AsyncSession) -> None:
     sender = CapturingEmailSender()
     set_email_sender(sender)
     try:
@@ -84,9 +80,7 @@ async def test_email_verification_flow(
         link = sender.sent[-1]["body"]
         raw_token = link.split("token=")[-1].strip()
 
-        confirm = await client.post(
-            "/api/v1/auth/verify-email/confirm", json={"token": raw_token}
-        )
+        confirm = await client.post("/api/v1/auth/verify-email/confirm", json={"token": raw_token})
         assert confirm.status_code == 200, confirm.text
 
         me = await client.get("/api/v1/users/me", headers=auth(token))

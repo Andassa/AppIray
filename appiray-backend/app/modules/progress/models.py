@@ -20,9 +20,7 @@ from app.core.enums import ProgressStatus
 
 class UserProgress(Base):
     __tablename__ = "user_progress"
-    __table_args__ = (
-        UniqueConstraint("user_id", "lesson_id", name="uq_user_lesson_progress"),
-    )
+    __table_args__ = (UniqueConstraint("user_id", "lesson_id", name="uq_user_lesson_progress"),)
 
     id: Mapped[str] = mapped_column(
         UUID(as_uuid=False), primary_key=True, default=lambda: str(uuid4())

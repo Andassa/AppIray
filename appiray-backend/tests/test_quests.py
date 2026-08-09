@@ -1,9 +1,9 @@
 import pytest
+from app.core.enums import ExerciseType
+from app.modules.courses.models import Course, Exercise, Lesson, Unit
 from httpx import AsyncClient
 from sqlalchemy.ext.asyncio import AsyncSession
 
-from app.core.enums import ExerciseType
-from app.modules.courses.models import Course, Exercise, Lesson, Unit
 from tests.helpers import auth, create_user, login
 
 

@@ -34,9 +34,7 @@ async def get_course(course_id: str, db: DbSession, _: CurrentUser) -> CourseDet
 
 
 @router.post("", response_model=CourseRead, status_code=201)
-async def create_course(
-    data: CourseCreate, db: DbSession, _: CurrentAdmin
-) -> CourseRead:
+async def create_course(data: CourseCreate, db: DbSession, _: CurrentAdmin) -> CourseRead:
     course = await CourseService(db).create_course(data)
     return CourseRead.model_validate(course)
 
@@ -50,9 +48,7 @@ async def update_course(
 
 
 @router.post("/{course_id}/units", response_model=UnitRead, status_code=201)
-async def create_unit(
-    course_id: str, data: UnitCreate, db: DbSession, _: CurrentAdmin
-) -> UnitRead:
+async def create_unit(course_id: str, data: UnitCreate, db: DbSession, _: CurrentAdmin) -> UnitRead:
     unit = await CourseService(db).create_unit(course_id, data)
     return UnitRead.model_validate(unit)
 
@@ -105,9 +101,7 @@ async def create_exercise(
 
 
 @router.get("/{course_id}/placement-test", response_model=list[ExerciseRead])
-async def placement_test(
-    course_id: str, db: DbSession, _: CurrentUser
-) -> list[ExerciseRead]:
+async def placement_test(course_id: str, db: DbSession, _: CurrentUser) -> list[ExerciseRead]:
     exercises = await CourseService(db).placement_test_exercises(course_id)
     return [
         ExerciseRead(
@@ -130,7 +124,5 @@ async def submit_placement_test(
     user: CurrentUser,
 ) -> PlacementResult:
     answers = {a.exercise_id: a.answer for a in data.answers}
-    correct, unlocked = await CourseService(db).submit_placement_test(
-        user.id, course_id, answers
-    )
+    correct, unlocked = await CourseService(db).submit_placement_test(user.id, course_id, answers)
     return PlacementResult(correct_count=correct, units_unlocked=unlocked)

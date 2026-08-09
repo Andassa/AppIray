@@ -5,16 +5,17 @@ Revises: c9b92c5b7451
 Create Date: 2026-08-08 00:20:00.000000
 
 """
-from typing import Sequence, Union
+
+from collections.abc import Sequence
 
 import sqlalchemy as sa
 from alembic import op
 
 # revision identifiers, used by Alembic.
 revision: str = "b1d4e2f6a7c8"
-down_revision: Union[str, None] = "c9b92c5b7451"
-branch_labels: Union[str, Sequence[str], None] = None
-depends_on: Union[str, Sequence[str], None] = None
+down_revision: str | None = "c9b92c5b7451"
+branch_labels: str | Sequence[str] | None = None
+depends_on: str | Sequence[str] | None = None
 
 
 def upgrade() -> None:
@@ -38,9 +39,7 @@ def upgrade() -> None:
     )
     op.add_column(
         "users",
-        sa.Column(
-            "daily_xp_goal", sa.Integer(), nullable=False, server_default=sa.text("20")
-        ),
+        sa.Column("daily_xp_goal", sa.Integer(), nullable=False, server_default=sa.text("20")),
     )
     op.add_column("users", sa.Column("last_daily_goal_date", sa.Date(), nullable=True))
 
@@ -59,9 +58,7 @@ def upgrade() -> None:
             server_default="draft",
         ),
     )
-    op.create_index(
-        op.f("ix_publications_status"), "publications", ["status"], unique=False
-    )
+    op.create_index(op.f("ix_publications_status"), "publications", ["status"], unique=False)
 
     # --- password reset tokens ---
     op.create_table(
@@ -140,18 +137,14 @@ def upgrade() -> None:
         sa.ForeignKeyConstraint(["user_id"], ["users.id"], ondelete="CASCADE"),
         sa.PrimaryKeyConstraint("id"),
     )
-    op.create_index(
-        op.f("ix_streak_freezes_user_id"), "streak_freezes", ["user_id"], unique=False
-    )
+    op.create_index(op.f("ix_streak_freezes_user_id"), "streak_freezes", ["user_id"], unique=False)
     op.create_index(
         op.f("ix_streak_freezes_active_until"),
         "streak_freezes",
         ["active_until"],
         unique=False,
     )
-    op.create_index(
-        op.f("ix_streak_freezes_used"), "streak_freezes", ["used"], unique=False
-    )
+    op.create_index(op.f("ix_streak_freezes_used"), "streak_freezes", ["used"], unique=False)
 
     # --- device tokens ---
     op.create_table(
@@ -161,9 +154,7 @@ def upgrade() -> None:
         sa.Column("token", sa.String(length=512), nullable=False),
         sa.Column(
             "platform",
-            sa.Enum(
-                "ios", "android", name="device_platform", native_enum=False
-            ),
+            sa.Enum("ios", "android", name="device_platform", native_enum=False),
             nullable=False,
         ),
         sa.Column(
@@ -182,12 +173,8 @@ def upgrade() -> None:
         sa.PrimaryKeyConstraint("id"),
         sa.UniqueConstraint("token", name="uq_device_token"),
     )
-    op.create_index(
-        op.f("ix_device_tokens_user_id"), "device_tokens", ["user_id"], unique=False
-    )
-    op.create_index(
-        op.f("ix_device_tokens_token"), "device_tokens", ["token"], unique=False
-    )
+    op.create_index(op.f("ix_device_tokens_user_id"), "device_tokens", ["user_id"], unique=False)
+    op.create_index(op.f("ix_device_tokens_token"), "device_tokens", ["token"], unique=False)
 
     # --- daily quests ---
     op.create_table(
@@ -227,9 +214,7 @@ def upgrade() -> None:
         ["quest_id"],
         unique=False,
     )
-    op.create_index(
-        op.f("ix_user_daily_quests_date"), "user_daily_quests", ["date"], unique=False
-    )
+    op.create_index(op.f("ix_user_daily_quests_date"), "user_daily_quests", ["date"], unique=False)
 
 
 def downgrade() -> None:
@@ -262,9 +247,7 @@ def downgrade() -> None:
         op.f("ix_password_reset_tokens_token_hash"),
         table_name="password_reset_tokens",
     )
-    op.drop_index(
-        op.f("ix_password_reset_tokens_user_id"), table_name="password_reset_tokens"
-    )
+    op.drop_index(op.f("ix_password_reset_tokens_user_id"), table_name="password_reset_tokens")
     op.drop_table("password_reset_tokens")
 
     op.drop_index(op.f("ix_publications_status"), table_name="publications")

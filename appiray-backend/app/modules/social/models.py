@@ -11,9 +11,7 @@ from app.core.enums import FriendshipStatus
 
 class Friendship(Base):
     __tablename__ = "friendships"
-    __table_args__ = (
-        UniqueConstraint("user_id", "friend_id", name="uq_friendship_pair"),
-    )
+    __table_args__ = (UniqueConstraint("user_id", "friend_id", name="uq_friendship_pair"),)
 
     id: Mapped[str] = mapped_column(
         UUID(as_uuid=False), primary_key=True, default=lambda: str(uuid4())

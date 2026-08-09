@@ -1,9 +1,9 @@
 import pytest
+from app.core.enums import ExerciseType
+from app.modules.courses.models import Course, Exercise, Lesson, Unit
 from httpx import AsyncClient
 from sqlalchemy.ext.asyncio import AsyncSession
 
-from app.core.enums import ExerciseType
-from app.modules.courses.models import Course, Exercise, Lesson, Unit
 from tests.helpers import auth, create_user, login
 
 
@@ -34,9 +34,7 @@ async def _seed_exercise(db: AsyncSession, *, correct: str = "salama") -> Exerci
 async def test_wrong_answer_arms_refill_and_gems_refill(
     client: AsyncClient, db_session: AsyncSession
 ) -> None:
-    await create_user(
-        db_session, email="econ@example.com", username="econ", gems=1000
-    )
+    await create_user(db_session, email="econ@example.com", username="econ", gems=1000)
     exercise = await _seed_exercise(db_session)
     token = await login(client, email="econ@example.com")
 
@@ -54,9 +52,7 @@ async def test_wrong_answer_arms_refill_and_gems_refill(
     assert body["hearts"] == 4
     assert body["heart_refill_at"] is not None
 
-    refill = await client.post(
-        "/api/v1/progress/hearts/refill-with-gems", headers=auth(token)
-    )
+    refill = await client.post("/api/v1/progress/hearts/refill-with-gems", headers=auth(token))
     assert refill.status_code == 200, refill.text
     assert refill.json()["hearts"] == body["max_hearts"]
     assert refill.json()["heart_refill_at"] is None
@@ -69,16 +65,12 @@ async def test_refill_with_gems_requires_missing_hearts(
 ) -> None:
     await create_user(db_session, email="full@example.com", username="fullhearts", gems=1000)
     token = await login(client, email="full@example.com")
-    resp = await client.post(
-        "/api/v1/progress/hearts/refill-with-gems", headers=auth(token)
-    )
+    resp = await client.post("/api/v1/progress/hearts/refill-with-gems", headers=auth(token))
     assert resp.status_code == 400
 
 
 @pytest.mark.asyncio
-async def test_streak_freeze_purchase(
-    client: AsyncClient, db_session: AsyncSession
-) -> None:
+async def test_streak_freeze_purchase(client: AsyncClient, db_session: AsyncSession) -> None:
     await create_user(db_session, email="freeze@example.com", username="freezer", gems=1000)
     token = await login(client, email="freeze@example.com")
 
@@ -102,9 +94,7 @@ async def test_streak_freeze_insufficient_gems(
 
 
 @pytest.mark.asyncio
-async def test_update_daily_goal(
-    client: AsyncClient, db_session: AsyncSession
-) -> None:
+async def test_update_daily_goal(client: AsyncClient, db_session: AsyncSession) -> None:
     await create_user(db_session, email="goal@example.com", username="goalie")
     token = await login(client, email="goal@example.com")
     resp = await client.patch(
@@ -118,9 +108,7 @@ async def test_update_daily_goal(
 
 
 @pytest.mark.asyncio
-async def test_practice_mode_no_heart_cost(
-    client: AsyncClient, db_session: AsyncSession
-) -> None:
+async def test_practice_mode_no_heart_cost(client: AsyncClient, db_session: AsyncSession) -> None:
     await create_user(db_session, email="prac@example.com", username="practicer")
     exercise = await _seed_exercise(db_session)
     token = await login(client, email="prac@example.com")

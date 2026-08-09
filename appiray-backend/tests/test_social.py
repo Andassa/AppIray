@@ -6,9 +6,7 @@ from tests.helpers import auth, create_user, login
 
 
 @pytest.mark.asyncio
-async def test_user_search_and_relationship(
-    client: AsyncClient, db_session: AsyncSession
-) -> None:
+async def test_user_search_and_relationship(client: AsyncClient, db_session: AsyncSession) -> None:
     await create_user(db_session, email="searcher@example.com", username="searcher")
     await create_user(db_session, email="target@example.com", username="targetuser")
     await create_user(db_session, email="other@example.com", username="another")

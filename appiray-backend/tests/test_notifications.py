@@ -39,9 +39,7 @@ async def test_device_token_register_and_remove(
 
 
 @pytest.mark.asyncio
-async def test_notifications_listing(
-    client: AsyncClient, db_session: AsyncSession
-) -> None:
+async def test_notifications_listing(client: AsyncClient, db_session: AsyncSession) -> None:
     await create_user(db_session, email="notif@example.com", username="notifier")
     token = await login(client, email="notif@example.com")
 

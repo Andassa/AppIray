@@ -90,7 +90,12 @@ class Exercise(Base):
         UUID(as_uuid=False), ForeignKey("lessons.id", ondelete="CASCADE"), index=True
     )
     type: Mapped[ExerciseType] = mapped_column(
-        Enum(ExerciseType, name="exercise_type", values_callable=lambda x: [e.value for e in x], native_enum=False),
+        Enum(
+            ExerciseType,
+            name="exercise_type",
+            values_callable=lambda x: [e.value for e in x],
+            native_enum=False,
+        ),
         nullable=False,
     )
     content: Mapped[dict] = mapped_column(JSON, nullable=False, default=dict)

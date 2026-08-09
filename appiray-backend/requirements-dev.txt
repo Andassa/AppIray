@@ -1,0 +1,5 @@
+# Outils de qualité / CI (pas nécessaires en runtime prod)
+ruff>=0.8.0,<1
+mypy>=1.13.0,<2
+pytest-cov>=6.0.0,<7
+types-passlib>=1.7.0

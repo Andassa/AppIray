@@ -16,9 +16,7 @@ router = APIRouter(prefix="/gamification", tags=["gamification"])
 
 
 @router.get("/league/me", response_model=LeagueRead)
-async def my_league(
-    user: CurrentUser, db: DbSession, redis: RedisClient
-) -> LeagueRead:
+async def my_league(user: CurrentUser, db: DbSession, redis: RedisClient) -> LeagueRead:
     league = await GamificationService(db, redis).current_league(user)
     await db.commit()
     return LeagueRead.model_validate(league)
@@ -49,9 +47,7 @@ async def create_badge(
 
 
 @router.get("/badges/me", response_model=list[UserBadgeRead])
-async def my_badges(
-    user: CurrentUser, db: DbSession, redis: RedisClient
-) -> list[UserBadgeRead]:
+async def my_badges(user: CurrentUser, db: DbSession, redis: RedisClient) -> list[UserBadgeRead]:
     items = await GamificationService(db, redis).list_user_badges(user.id)
     return [UserBadgeRead.model_validate(i) for i in items]
 

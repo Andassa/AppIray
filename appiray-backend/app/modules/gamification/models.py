@@ -37,9 +37,7 @@ class League(Base):
 
 class LeagueMembership(Base):
     __tablename__ = "league_memberships"
-    __table_args__ = (
-        UniqueConstraint("league_id", "user_id", name="uq_league_user"),
-    )
+    __table_args__ = (UniqueConstraint("league_id", "user_id", name="uq_league_user"),)
 
     id: Mapped[str] = mapped_column(
         UUID(as_uuid=False), primary_key=True, default=lambda: str(uuid4())
@@ -109,9 +107,7 @@ class DailyQuest(Base):
 
 class UserDailyQuest(Base):
     __tablename__ = "user_daily_quests"
-    __table_args__ = (
-        UniqueConstraint("user_id", "quest_id", "date", name="uq_user_quest_date"),
-    )
+    __table_args__ = (UniqueConstraint("user_id", "quest_id", "date", name="uq_user_quest_date"),)
 
     id: Mapped[str] = mapped_column(
         UUID(as_uuid=False), primary_key=True, default=lambda: str(uuid4())
@@ -124,9 +120,7 @@ class UserDailyQuest(Base):
     )
     date: Mapped[date] = mapped_column(Date, nullable=False, index=True)
     progress: Mapped[int] = mapped_column(Integer, default=0, nullable=False)
-    completed_at: Mapped[datetime | None] = mapped_column(
-        DateTime(timezone=True), nullable=True
-    )
+    completed_at: Mapped[datetime | None] = mapped_column(DateTime(timezone=True), nullable=True)
 
     quest = relationship("DailyQuest", back_populates="user_quests")
     user = relationship("User")

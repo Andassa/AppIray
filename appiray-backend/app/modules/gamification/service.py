@@ -78,9 +78,7 @@ class GamificationService:
         membership = await self.ensure_membership(user)
         membership.xp_this_week += amount
         if self.redis:
-            await self.redis.zincrby(
-                self._leaderboard_key(membership.league_id), amount, user.id
-            )
+            await self.redis.zincrby(self._leaderboard_key(membership.league_id), amount, user.id)
 
     async def get_leaderboard(self, user: User, limit: int = 50) -> list[LeaderboardEntry]:
         membership = await self.ensure_membership(user)

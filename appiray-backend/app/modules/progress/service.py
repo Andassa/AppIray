@@ -125,9 +125,7 @@ class ProgressService:
         )
 
     async def list_progress(self, user_id: str) -> list[UserProgress]:
-        result = await self.db.execute(
-            select(UserProgress).where(UserProgress.user_id == user_id)
-        )
+        result = await self.db.execute(select(UserProgress).where(UserProgress.user_id == user_id))
         return list(result.scalars().all())
 
     async def list_xp(self, user_id: str, limit: int = 50) -> list[XPTransaction]:

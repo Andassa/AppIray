@@ -66,9 +66,7 @@ async def reset_inactive_streaks() -> None:
                 )
             )
         await session.commit()
-        logger.info(
-            "Streak job: reset=%s protected_by_freeze=%s", reset_count, frozen_count
-        )
+        logger.info("Streak job: reset=%s protected_by_freeze=%s", reset_count, frozen_count)
 
 
 async def notify_streak_at_risk() -> None:

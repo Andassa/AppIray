@@ -65,7 +65,5 @@ async def update_asset(
 
 
 @router.delete("/assets/{asset_id}", status_code=204)
-async def delete_asset(
-    asset_id: str, db: DbSession, storage: Storage, _: CurrentAdmin
-) -> None:
+async def delete_asset(asset_id: str, db: DbSession, storage: Storage, _: CurrentAdmin) -> None:
     await AudioService(db, storage).delete(asset_id)

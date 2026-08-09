@@ -1,0 +1,31 @@
+[tool.ruff]
+target-version = "py312"
+line-length = 100
+src = ["app", "tests"]
+
+[tool.ruff.lint]
+select = ["E", "F", "I", "B", "UP", "RUF", "DTZ"]
+# FastAPI utilise des defaults `Depends(...)` / `Query(...)` — B008 est trop bruyant
+# sur les signatures de routes ; on garde B008 désactivé ici et on privilégie
+# Annotated là où c'est simple (ex. UploadFile).
+# B008 : defaults Depends/File FastAPI. UP042 : (str, Enum) volontaire pour SQLAlchemy.
+ignore = ["B008", "UP042"]
+
+[tool.ruff.lint.per-file-ignores]
+"tests/**" = ["RUF059"]
+
+[tool.ruff.format]
+quote-style = "double"
+
+[tool.mypy]
+python_version = "3.12"
+packages = ["app"]
+ignore_missing_imports = true
+warn_unused_ignores = false
+check_untyped_defs = false
+# Projet jamais typé-checké auparavant : config minimale, non bloquante en CI.
+disallow_untyped_defs = false
+
+[tool.pytest.ini_options]
+asyncio_mode = "auto"
+testpaths = ["tests"]

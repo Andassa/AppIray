@@ -1,9 +1,9 @@
 import pytest
+from app.core.enums import ExerciseType, UserRole
+from app.modules.courses.models import Course, Exercise, Lesson, Unit
 from httpx import AsyncClient
 from sqlalchemy.ext.asyncio import AsyncSession
 
-from app.core.enums import ExerciseType, UserRole
-from app.modules.courses.models import Course, Exercise, Lesson, Unit
 from tests.helpers import auth, create_user, login
 
 
@@ -32,9 +32,7 @@ async def _seed_course(db: AsyncSession) -> dict:
 
 
 @pytest.mark.asyncio
-async def test_lesson_lock_and_unlock(
-    client: AsyncClient, db_session: AsyncSession
-) -> None:
+async def test_lesson_lock_and_unlock(client: AsyncClient, db_session: AsyncSession) -> None:
     ids = await _seed_course(db_session)
     await create_user(db_session, email="lock@example.com", username="locker")
     token = await login(client, email="lock@example.com")
@@ -53,9 +51,7 @@ async def test_lesson_lock_and_unlock(
         headers=auth(token),
         json={"exercise_id": ids["e1"], "answer": "a"},
     )
-    unlocked = await client.get(
-        f"/api/v1/courses/lessons/{ids['l2']}", headers=auth(token)
-    )
+    unlocked = await client.get(f"/api/v1/courses/lessons/{ids['l2']}", headers=auth(token))
     assert unlocked.status_code == 200
 
 
@@ -65,9 +61,7 @@ async def test_placement_test(client: AsyncClient, db_session: AsyncSession) -> 
     await create_user(db_session, email="place@example.com", username="placer")
     token = await login(client, email="place@example.com")
 
-    test = await client.get(
-        f"/api/v1/courses/{ids['course']}/placement-test", headers=auth(token)
-    )
+    test = await client.get(f"/api/v1/courses/{ids['course']}/placement-test", headers=auth(token))
     assert test.status_code == 200
     exercises = test.json()
     assert len(exercises) == 2  # one representative per unit
@@ -92,12 +86,8 @@ async def test_placement_test(client: AsyncClient, db_session: AsyncSession) -> 
 
 
 @pytest.mark.asyncio
-async def test_course_crud_nominal(
-    client: AsyncClient, db_session: AsyncSession
-) -> None:
-    await create_user(
-        db_session, email="admin@example.com", username="admin", role=UserRole.ADMIN
-    )
+async def test_course_crud_nominal(client: AsyncClient, db_session: AsyncSession) -> None:
+    await create_user(db_session, email="admin@example.com", username="admin", role=UserRole.ADMIN)
     token = await login(client, email="admin@example.com")
 
     created = await client.post(

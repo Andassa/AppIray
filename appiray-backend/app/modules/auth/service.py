@@ -106,9 +106,7 @@ class AuthService:
 
         # Rotate: blacklist old refresh token
         if jti:
-            ttl = int(
-                timedelta(days=self.settings.REFRESH_TOKEN_EXPIRE_DAYS).total_seconds()
-            )
+            ttl = int(timedelta(days=self.settings.REFRESH_TOKEN_EXPIRE_DAYS).total_seconds())
             await self.redis.setex(f"blacklist:{jti}", ttl, "1")
 
         return self._tokens_for(user)
@@ -204,9 +202,7 @@ class AuthService:
     async def confirm_email_verification(self, token: str) -> None:
         token_hash = hash_token(token)
         result = await self.db.execute(
-            select(EmailVerificationToken).where(
-                EmailVerificationToken.token_hash == token_hash
-            )
+            select(EmailVerificationToken).where(EmailVerificationToken.token_hash == token_hash)
         )
         verif_token = result.scalar_one_or_none()
         if verif_token is None or verif_token.verified_at is not None:

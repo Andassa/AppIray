@@ -1,11 +1,10 @@
 import pytest
-from httpx import AsyncClient
-from sqlalchemy.ext.asyncio import AsyncSession
-
 from app.core.enums import ExerciseType, UserRole
 from app.core.security import hash_password
 from app.modules.courses.models import Course, Exercise, Lesson, Unit
 from app.modules.users.models import User
+from httpx import AsyncClient
+from sqlalchemy.ext.asyncio import AsyncSession
 
 
 async def _seed_lesson(db: AsyncSession) -> tuple[User, Exercise]:
@@ -40,9 +39,7 @@ async def _seed_lesson(db: AsyncSession) -> tuple[User, Exercise]:
 
 
 @pytest.mark.asyncio
-async def test_submit_answer_awards_xp(
-    client: AsyncClient, db_session: AsyncSession
-) -> None:
+async def test_submit_answer_awards_xp(client: AsyncClient, db_session: AsyncSession) -> None:
     user, exercise = await _seed_lesson(db_session)
 
     login = await client.post(

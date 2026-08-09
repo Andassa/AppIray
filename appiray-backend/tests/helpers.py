@@ -1,9 +1,8 @@
-from httpx import AsyncClient
-from sqlalchemy.ext.asyncio import AsyncSession
-
 from app.core.enums import UserRole
 from app.core.security import hash_password
 from app.modules.users.models import User
+from httpx import AsyncClient
+from sqlalchemy.ext.asyncio import AsyncSession
 
 
 async def register_user(
@@ -44,12 +43,8 @@ async def create_user(
     return user
 
 
-async def login(
-    client: AsyncClient, *, email: str, password: str = "securepass1"
-) -> str:
-    resp = await client.post(
-        "/api/v1/auth/login", json={"email": email, "password": password}
-    )
+async def login(client: AsyncClient, *, email: str, password: str = "securepass1") -> str:
+    resp = await client.post("/api/v1/auth/login", json={"email": email, "password": password})
     assert resp.status_code == 200, resp.text
     return resp.json()["access_token"]
 

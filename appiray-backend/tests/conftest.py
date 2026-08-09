@@ -1,14 +1,13 @@
 from collections.abc import AsyncGenerator
 from typing import Any
 
+import app.models  # noqa: F401
 import pytest_asyncio
-from httpx import ASGITransport, AsyncClient
-from sqlalchemy.ext.asyncio import AsyncSession, async_sessionmaker, create_async_engine
-
 from app.core.database import Base, get_db
 from app.core.redis import get_redis
 from app.main import create_app
-import app.models  # noqa: F401
+from httpx import ASGITransport, AsyncClient
+from sqlalchemy.ext.asyncio import AsyncSession, async_sessionmaker, create_async_engine
 
 
 class FakeRedis:
@@ -44,9 +43,7 @@ class FakeRedis:
         z[member] = z.get(member, 0.0) + float(amount)
         return z[member]
 
-    async def zrevrange(
-        self, key: str, start: int, end: int, withscores: bool = False
-    ):
+    async def zrevrange(self, key: str, start: int, end: int, withscores: bool = False):
         z = self._zsets.get(key, {})
         ordered = sorted(z.items(), key=lambda x: x[1], reverse=True)
         if end == -1:

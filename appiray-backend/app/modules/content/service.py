@@ -86,9 +86,7 @@ class ContentService:
         pubs = list(result.scalars().all())
         return [_to_read(p) for p in pubs], total
 
-    async def get_publication(
-        self, pub_id: str, *, published_only: bool = True
-    ) -> PublicationRead:
+    async def get_publication(self, pub_id: str, *, published_only: bool = True) -> PublicationRead:
         result = await self.db.execute(
             select(Publication)
             .where(Publication.id == pub_id)
@@ -113,9 +111,7 @@ class ContentService:
         if comment is None or comment.publication_id != pub_id:
             raise HTTPException(status_code=404, detail="Comment not found")
         if comment.user_id != user.id and user.role != UserRole.ADMIN:
-            raise HTTPException(
-                status_code=403, detail="Not allowed to delete this comment"
-            )
+            raise HTTPException(status_code=403, detail="Not allowed to delete this comment")
         await self.db.delete(comment)
         await self.db.commit()
 
@@ -144,13 +140,9 @@ class ContentService:
             await self.db.delete(like)
             await self.db.commit()
 
-    async def add_comment(
-        self, user: User, pub_id: str, data: CommentCreate
-    ) -> PublicationComment:
+    async def add_comment(self, user: User, pub_id: str, data: CommentCreate) -> PublicationComment:
         await self._get(pub_id)
-        comment = PublicationComment(
-            publication_id=pub_id, user_id=user.id, body=data.body
-        )
+        comment = PublicationComment(publication_id=pub_id, user_id=user.id, body=data.body)
         self.db.add(comment)
         await self.db.commit()
         await self.db.refresh(comment)

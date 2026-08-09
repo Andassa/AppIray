@@ -38,17 +38,13 @@ async def my_progress(user: CurrentUser, db: DbSession, redis: RedisClient) -> l
 
 
 @router.get("/me/xp", response_model=list[XPTransactionRead])
-async def my_xp(
-    user: CurrentUser, db: DbSession, redis: RedisClient
-) -> list[XPTransactionRead]:
+async def my_xp(user: CurrentUser, db: DbSession, redis: RedisClient) -> list[XPTransactionRead]:
     items = await ProgressService(db, redis).list_xp(user.id)
     return [XPTransactionRead.model_validate(i) for i in items]
 
 
 @router.get("/hearts", response_model=HeartsStatus)
-async def hearts_status(
-    user: CurrentUser, db: DbSession, redis: RedisClient
-) -> HeartsStatus:
+async def hearts_status(user: CurrentUser, db: DbSession, redis: RedisClient) -> HeartsStatus:
     settings = get_settings()
     if apply_heart_regen(user, settings):
         await db.commit()

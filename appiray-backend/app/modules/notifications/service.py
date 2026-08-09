@@ -41,13 +41,9 @@ class NotificationService:
         await self.db.commit()
         return len(items)
 
-    async def register_device_token(
-        self, user: User, data: DeviceTokenCreate
-    ) -> DeviceToken:
+    async def register_device_token(self, user: User, data: DeviceTokenCreate) -> DeviceToken:
         """Register or refresh a device token (idempotent on the token value)."""
-        result = await self.db.execute(
-            select(DeviceToken).where(DeviceToken.token == data.token)
-        )
+        result = await self.db.execute(select(DeviceToken).where(DeviceToken.token == data.token))
         device = result.scalar_one_or_none()
         now = datetime.now(UTC)
         if device is None:
@@ -68,9 +64,7 @@ class NotificationService:
 
     async def remove_device_token(self, user: User, token: str) -> None:
         result = await self.db.execute(
-            select(DeviceToken).where(
-                DeviceToken.token == token, DeviceToken.user_id == user.id
-            )
+            select(DeviceToken).where(DeviceToken.token == token, DeviceToken.user_id == user.id)
         )
         device = result.scalar_one_or_none()
         if device is not None:

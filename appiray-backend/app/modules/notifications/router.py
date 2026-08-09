@@ -22,9 +22,7 @@ async def list_notifications(
 
 
 @router.post("/{notification_id}/read", response_model=NotificationRead)
-async def mark_read(
-    notification_id: str, user: CurrentUser, db: DbSession
-) -> NotificationRead:
+async def mark_read(notification_id: str, user: CurrentUser, db: DbSession) -> NotificationRead:
     item = await NotificationService(db).mark_read(user, notification_id)
     return NotificationRead.model_validate(item)
 
@@ -44,7 +42,5 @@ async def register_device_token(
 
 
 @router.delete("/device-token", status_code=204)
-async def remove_device_token(
-    data: DeviceTokenCreate, user: CurrentUser, db: DbSession
-) -> None:
+async def remove_device_token(data: DeviceTokenCreate, user: CurrentUser, db: DbSession) -> None:
     await NotificationService(db).remove_device_token(user, data.token)

@@ -1,16 +1,13 @@
 import pytest
-from httpx import AsyncClient
-from sqlalchemy.ext.asyncio import AsyncSession
-
 from app.core.enums import UserRole
 from app.core.security import hash_password
 from app.modules.users.models import User
+from httpx import AsyncClient
+from sqlalchemy.ext.asyncio import AsyncSession
 
 
 @pytest.mark.asyncio
-async def test_league_leaderboard(
-    client: AsyncClient, db_session: AsyncSession
-) -> None:
+async def test_league_leaderboard(client: AsyncClient, db_session: AsyncSession) -> None:
     users = [
         User(
             email=f"u{i}@example.com",

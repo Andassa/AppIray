@@ -110,15 +110,18 @@ Même principe que `TaskQueue` et `StorageBackend` : une interface abstraite + u
 ```python
 from app.core.email import EmailSender
 
+
 class ResendEmailSender(EmailSender):
-    async def send(self, *, to: str, subject: str, body: str) -> None:
-        ...  # appel API Resend/SendGrid/SES
+    async def send(
+        self, *, to: str, subject: str, body: str
+    ) -> None: ...  # appel API Resend/SendGrid/SES
 ```
 
 2. L’injecter au démarrage (ex. dans le `lifespan` de `app/main.py`) :
 
 ```python
 from app.core.email import set_email_sender
+
 set_email_sender(ResendEmailSender())
 ```
 
@@ -193,3 +196,36 @@ L’auth JWT est stateless → plusieurs instances derrière un load balancer, a
 
 Le fine-tuning / génération MMS-TTS (`facebook/mms-tts-mlg`) reste **offline en batch**.  
 Ensuite : upload des fichiers via `POST /api/v1/audio/assets/upload` (admin) et liaison `audio_asset_id` sur les exercices.
+
+## CI (GitHub Actions)
+
+Workflow : `.github/workflows/backend_ci.yml` (racine du monorepo).  
+Déclenché uniquement sur les changements `appiray-backend/**` (et le workflow lui-même).
+
+### Job `lint-and-test`
+
+| Étape | Commande | Rôle |
+|---|---|---|
+| Lint | `ruff check .` | Style / bugs courants |
+| Format | `ruff format --check .` | Échoue si le code n'est pas formaté (ne reformate pas en CI) |
+| Types | `mypy app/` | **Non bloquant** pour l'instant (`continue-on-error`) — première introduction |
+| Tests | `pytest -q --cov=app --cov-report=term-missing` | SQLite mémoire + FakeRedis (pas de Docker requis) |
+
+### Job `docker`
+
+Build l'image, `docker compose up`, attend `/health`, rejoue `alembic upgrade head` **contre Postgres** (validation des migrations hors SQLite), vérifie HTTP 200, puis `docker compose down -v` (`if: always()`).
+
+### Lancer les mêmes checks en local (avant un push)
+
+```bash
+cd appiray-backend
+python -m venv .venv && source .venv/bin/activate
+pip install -r requirements.txt -r requirements-dev.txt
+
+ruff check .
+ruff format --check .     # ou `ruff format .` pour reformater
+mypy app/                 # optionnel / non bloquant pour l'instant
+pytest -q --cov=app --cov-report=term-missing
+```
+
+Configs : `pyproject.toml` (ruff + mypy + pytest) ; deps outils dans `requirements-dev.txt`.

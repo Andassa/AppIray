@@ -71,9 +71,7 @@ class CourseService:
 
     async def get_lesson(self, lesson_id: str) -> Lesson:
         result = await self.db.execute(
-            select(Lesson)
-            .where(Lesson.id == lesson_id)
-            .options(selectinload(Lesson.exercises))
+            select(Lesson).where(Lesson.id == lesson_id).options(selectinload(Lesson.exercises))
         )
         lesson = result.scalar_one_or_none()
         if lesson is None:
@@ -92,9 +90,7 @@ class CourseService:
         result = await self.db.execute(select(Exercise).where(Exercise.id == exercise_id))
         exercise = result.scalar_one_or_none()
         if exercise is None:
-            raise HTTPException(
-                status_code=status.HTTP_404_NOT_FOUND, detail="Exercise not found"
-            )
+            raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Exercise not found")
         return exercise
 
     async def _completed_lesson_ids(self, user_id: str) -> set[str]:
@@ -123,10 +119,14 @@ class CourseService:
 
         # Lessons of this unit, ordered.
         unit_lessons = (
-            await self.db.execute(
-                select(Lesson).where(Lesson.unit_id == unit.id).order_by(Lesson.order)
+            (
+                await self.db.execute(
+                    select(Lesson).where(Lesson.unit_id == unit.id).order_by(Lesson.order)
+                )
             )
-        ).scalars().all()
+            .scalars()
+            .all()
+        )
         idx = next((i for i, le in enumerate(unit_lessons) if le.id == lesson.id), 0)
 
         if idx > 0:
@@ -145,8 +145,10 @@ class CourseService:
             return True  # first unit, first lesson
 
         prev_lessons = (
-            await self.db.execute(select(Lesson).where(Lesson.unit_id == prev_unit.id))
-        ).scalars().all()
+            (await self.db.execute(select(Lesson).where(Lesson.unit_id == prev_unit.id)))
+            .scalars()
+            .all()
+        )
         if not prev_lessons:
             return True
         return all(le.id in completed for le in prev_lessons)
@@ -157,13 +159,17 @@ class CourseService:
         exercises: list[Exercise] = []
         for unit in sorted(course.units, key=lambda u: u.order):
             lessons = (
-                await self.db.execute(
-                    select(Lesson)
-                    .where(Lesson.unit_id == unit.id)
-                    .order_by(Lesson.order)
-                    .options(selectinload(Lesson.exercises))
+                (
+                    await self.db.execute(
+                        select(Lesson)
+                        .where(Lesson.unit_id == unit.id)
+                        .order_by(Lesson.order)
+                        .options(selectinload(Lesson.exercises))
+                    )
                 )
-            ).scalars().all()
+                .scalars()
+                .all()
+            )
             for lesson in lessons:
                 ordered = sorted(lesson.exercises, key=lambda e: e.order)
                 if ordered:
@@ -189,16 +195,14 @@ class CourseService:
         graded_correct = 0
         if exercise_ids:
             rows = (
-                await self.db.execute(
-                    select(Exercise).where(Exercise.id.in_(exercise_ids))
-                )
-            ).scalars().all()
+                (await self.db.execute(select(Exercise).where(Exercise.id.in_(exercise_ids))))
+                .scalars()
+                .all()
+            )
             by_id = {e.id: e for e in rows}
             for ex_id, given in answers.items():
                 exercise = by_id.get(ex_id)
-                if exercise and self._normalize(given) == self._normalize(
-                    exercise.correct_answer
-                ):
+                if exercise and self._normalize(given) == self._normalize(exercise.correct_answer):
                     graded_correct += 1
 
         units_to_unlock = min(graded_correct, len(ordered_units))
@@ -206,8 +210,10 @@ class CourseService:
         completed = await self._completed_lesson_ids(user_id)
         for unit in ordered_units[:units_to_unlock]:
             lessons = (
-                await self.db.execute(select(Lesson).where(Lesson.unit_id == unit.id))
-            ).scalars().all()
+                (await self.db.execute(select(Lesson).where(Lesson.unit_id == unit.id)))
+                .scalars()
+                .all()
+            )
             for lesson in lessons:
                 if lesson.id in completed:
                     continue

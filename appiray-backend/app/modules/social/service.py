@@ -1,4 +1,4 @@
-from fastapi import HTTPException, status
+from fastapi import HTTPException
 from sqlalchemy import or_, select
 from sqlalchemy.ext.asyncio import AsyncSession
 
@@ -68,9 +68,7 @@ class SocialService:
         )
         return list(result.scalars().all())
 
-    async def search_users(
-        self, user: User, query: str, limit: int = 20
-    ) -> list[UserSearchResult]:
+    async def search_users(self, user: User, query: str, limit: int = 20) -> list[UserSearchResult]:
         result = await self.db.execute(
             select(User)
             .where(User.username.ilike(f"%{query}%"), User.id != user.id)
@@ -85,10 +83,8 @@ class SocialService:
         rel_result = await self.db.execute(
             select(Friendship).where(
                 or_(
-                    (Friendship.user_id == user.id)
-                    & (Friendship.friend_id.in_(found_ids)),
-                    (Friendship.friend_id == user.id)
-                    & (Friendship.user_id.in_(found_ids)),
+                    (Friendship.user_id == user.id) & (Friendship.friend_id.in_(found_ids)),
+                    (Friendship.friend_id == user.id) & (Friendship.user_id.in_(found_ids)),
                 )
             )
         )
@@ -110,9 +106,7 @@ class SocialService:
 
     async def friends_leaderboard(self, user: User) -> list[FriendLeaderboardEntry]:
         friendships = await self.list_friends(user.id)
-        friend_ids = {
-            f.friend_id if f.user_id == user.id else f.user_id for f in friendships
-        }
+        friend_ids = {f.friend_id if f.user_id == user.id else f.user_id for f in friendships}
         friend_ids.add(user.id)
         result = await self.db.execute(
             select(User).where(User.id.in_(friend_ids)).order_by(User.xp_total.desc())

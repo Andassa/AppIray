@@ -36,6 +36,4 @@ def apply_heart_regen(user: User, settings: Settings) -> bool:
 def start_refill_timer_if_needed(user: User, settings: Settings) -> None:
     """Arm the refill timer the first time a user drops below max hearts."""
     if user.hearts < settings.MAX_HEARTS and user.heart_refill_at is None:
-        user.heart_refill_at = datetime.now(UTC) + timedelta(
-            minutes=settings.HEART_REFILL_MINUTES
-        )
+        user.heart_refill_at = datetime.now(UTC) + timedelta(minutes=settings.HEART_REFILL_MINUTES)

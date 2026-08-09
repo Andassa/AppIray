@@ -3,7 +3,7 @@ from __future__ import annotations
 import logging
 from abc import ABC, abstractmethod
 from collections.abc import Awaitable, Callable
-from datetime import datetime
+from datetime import UTC, datetime
 from typing import Any
 
 from apscheduler.schedulers.asyncio import AsyncIOScheduler
@@ -49,12 +49,10 @@ class TaskQueue(ABC):
         """Schedule a recurring interval job."""
 
     @abstractmethod
-    def start(self) -> None:
-        ...
+    def start(self) -> None: ...
 
     @abstractmethod
-    def shutdown(self) -> None:
-        ...
+    def shutdown(self) -> None: ...
 
 
 class InProcessTaskQueue(TaskQueue):
@@ -65,7 +63,7 @@ class InProcessTaskQueue(TaskQueue):
         self._scheduler.add_job(
             func,
             trigger="date",
-            run_date=datetime.now(),
+            run_date=datetime.now(UTC),
             args=args,
             kwargs=kwargs,
             misfire_grace_time=60,
