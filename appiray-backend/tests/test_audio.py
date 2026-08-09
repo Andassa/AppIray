@@ -7,9 +7,7 @@ from tests.helpers import auth, create_user, login
 
 
 async def _admin_token(client: AsyncClient, db_session: AsyncSession) -> str:
-    await create_user(
-        db_session, email="admin@example.com", username="admin", role=UserRole.ADMIN
-    )
+    await create_user(db_session, email="admin@example.com", username="admin", role=UserRole.ADMIN)
     return await login(client, email="admin@example.com")
 
 
