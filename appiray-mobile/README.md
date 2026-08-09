@@ -94,8 +94,9 @@ flutter run   # ajoute --dart-define=API_BASE_URL=... si besoin
 
 ## Lancer les tests
 
-Les tests de controllers (auth, home, lesson_player, progress) mockent les repositories
-via mocktail et valident la logique d'état indépendamment de l'UI.
+Les tests de controllers (auth, home, lesson_player, progress, placement_test)
+mockent les repositories via mocktail et valident la logique d'état
+indépendamment de l'UI.
 
 ```bash
 dart run build_runner build --delete-conflicting-outputs   # requis avant les tests
@@ -108,6 +109,14 @@ flutter test
   repositories. Si le backend est vide, les écrans affichent simplement un état
   vide/chargement — c'est attendu à ce stade.
 - Reconnaissance vocale (`speak`) : point d'entrée stub, STT à brancher plus tard.
+
+## Placement test
+
+Feature `lib/features/placement_test/` : après inscription (ou premier login
+si le flag local n'est pas encore posé), l'utilisateur peut passer un test de
+niveau (`GET/POST /courses/{id}/placement-test`) ou le **Passer** pour aller
+directement sur home. Réutilise les widgets d'exercice de `lesson_player`
+(sans cœurs / XP). Le résultat affiche `correct_count` et `units_unlocked`.
 
 ## Audio — exercices `listen`
 

@@ -1,17 +1,11 @@
 import 'package:flutter/material.dart';
 
-/// Écran de choix d'onboarding (niveau / objectif). Structure seulement —
-/// contenu et logique réels à brancher plus tard (placement test, etc.).
+import 'package:appiray/features/placement_test/presentation/screens/placement_test_intro_screen.dart';
+
+/// Ancien point d'entrée onboarding — délègue au test de positionnement.
 class OnboardingChoiceScreen extends StatelessWidget {
   const OnboardingChoiceScreen({super.key});
 
   @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(title: const Text('Bienvenue')),
-      body: const SafeArea(
-        child: Center(child: Text('Choix d\'onboarding (à brancher).')),
-      ),
-    );
-  }
+  Widget build(BuildContext context) => const PlacementTestIntroScreen();
 }
